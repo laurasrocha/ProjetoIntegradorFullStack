@@ -8,6 +8,14 @@ import ProjectForm from "./_components/ProjectForm";
 import { useState } from "react";
 import { useEffect } from "react";
 import ThemeSwitch from "../_components/themeSwitch";
+import { ToastProvider } from "../_components/ToastProvider";
+import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button"
+
+
 
 export default function SupervisorPage() {
   const [showForm, setShowForm] = useState(false);
@@ -17,15 +25,16 @@ export default function SupervisorPage() {
   const [projects, setProjects] = useState([]);
   //Pegando a variaverl URL_DOMINIO
   const URL_DOMINIO = process.env.NEXT_PUBLIC_URL_DOMINIO;
-  const aprovarProjeto = () => alert("Projeto aprovado!");
-  const recusarProjeto = () => alert("Projeto recusado!");
+  const [actionStatus, setActionStatus] = useState({});
+  const aprovarProjeto = () => toast.success("Projeto aprovado!");
+  const recusarProjeto = () => toast.error("Projeto recusado!");
   const atualizarStatus = () => alert("Status atualizado!");
   const enviarFeedback = () => {
     if (feedback.trim() === "") {
-      alert("Digite um feedback antes de enviar.");
+      toast.warning("Digite um feedback antes de enviar.");
       return;
     }
-    alert(`Feedback enviado: ${feedback}`);
+    toast.success(`Feedback enviado: ${feedback}`);
     setFeedback("");
   };
 
@@ -129,31 +138,25 @@ export default function SupervisorPage() {
                   Todos os Status
                 </option>
                 <option className="dark:text-black" value="pendente">
-                  Pendente
+                  Aprovado
                 </option>
                 <option className="dark:text-black" value="em andamento">
-                  Em Andamento
-                </option>
-                <option className="dark:text-black" value="concluído">
-                  Concluído
-                </option>
-                <option className="dark:text-black" value="recusado">
                   Recusado
                 </option>
+                <option className="dark:text-black" value="concluído">
+                  Pendente
+                </option>
+         
               </select>
-              {/* <button className="w-[150px] h-[35px] hidden sm:block cursor-pointer text-white py-2 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
-                    hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
-                    active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
-                    items-center justify-center text-center"
-              >Pesquisar</button> */}
+     
             </div>
           </div>
           <div className="flex justify-end p-2">
-            {/* Botão para alterar tema */}
+      
             <ThemeSwitch />
           </div>
         </div>
-
+        {/* cards */}
         <div className="w-full flex flex-wrap gap-6 justify-center mt-6">
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project) => (
@@ -161,16 +164,45 @@ export default function SupervisorPage() {
                 key={project.id}
                 className="w-[250px] p-4 bg-white dark:bg-gray-800 shadow-md rounded-lg flex flex-col"
               >
-                <h3 className="text-lg font-semibold text-[#004A8D] dark:text-white">
-                  {project.nome_projeto}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                  Desenvolvido por: {project.membros_projeto}
-                </p>
-                <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
-                  Turma: {project.turma_projeto}
-                </span>
+<select
+                className="w-[105px] h-[35px] border-2  border-[#004A8D] text-black dark:text-white px-1 py-1 ml-auto rounded"
+         
+              >
+                <option className="dark:text-black" value="">
+                  Status 
+                </option>
+                <option className="dark:text-black" value="pendente">
+                  Aprovado
+                </option>
+                <option className="dark:text-black" value="em andamento">
+                  Recusado
+                </option>
+                <option className="dark:text-black" value="concluído">
+                  Pendente
+                </option>
+        
+              </select>
+
+           
+
+                 
+                  <h3 className="text-lg w-28 font-semibold text-[#004A8D] dark:text-white">
+                    {project.nome_projeto}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                    Desenvolvido por: {project.membros_projeto}
+                  </p>
+                  <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+                
+                    Turma: {project.turma_projeto}
+                  </span>
+                     <Button variant="link"className={"ml-auto mt-auto"}>Ver Mais</Button>
+     
+
               </div>
+
+
+
             ))
           ) : (
             <p className="text-gray-600 dark:text-gray-300">
@@ -179,40 +211,13 @@ export default function SupervisorPage() {
           )}
         </div>
 
-        {/* <ProjectsGrid searchTerm={searchTerm} statusFilter={statusFilter} /> */}
 
         <div className="w-full flex items-center justify-center">
           <div className="w-[90%] max-w-md mt-8 border-t border-gray-300 pt-6 space-y-4">
             <h2 className="text-lg font-semibold text-black dark:text-white text-center">
               Ações do Supervisor
             </h2>
-            <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 justify-center">
-              <button
-                onClick={aprovarProjeto}
-                className="`w-[200px] h-[35px] sm:w-[210px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
-                duration-500 ease-in-out hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-                active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 ${className}`"
-              >
-                Aprovar Projeto
-              </button>
-              <button
-                onClick={recusarProjeto}
-                className="`w-[200px] h-[35px] sm:w-[210px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
-                  duration-500 ease-in-out hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-                  active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 ${className}`"
-              >
-                Recusar Projeto
-              </button>
-              <button
-                onClick={atualizarStatus}
-                className="`w-[200px] h-[35px] sm:w-[210px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
-                duration-500 ease-in-out hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-                active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 ${className}`"
-              >
-                Atualizar Status
-              </button>
-            </div>
-
+          
             <div className="mt-4">
               <textarea
                 value={feedback}

@@ -2,11 +2,26 @@
 import React from "react";
 import { updateProjectStatus, deleteProject } from "./actions";
 
+// ✅ Função para trocar cor da bolinha de acordo com o status
+const getStatusColor = (status) => {
+  switch (status) {
+    case "Concluído":
+      return "bg-green-500";
+    case "Em andamento":
+      return "bg-blue-500";
+    case "Recusado":
+      return "bg-red-500";
+    case "Pendente":
+    default:
+      return "bg-yellow-400";
+  }
+};
+
 export default function ProjectCard({ project, onStatusChange }) {
   const handleStatusChange = (e) => {
     const newStatus = e.target.value;
     updateProjectStatus(project.id, newStatus);
-    onStatusChange(); // atualiza a lista
+    onStatusChange();
   };
 
   const handleDelete = () => {
@@ -17,16 +32,22 @@ export default function ProjectCard({ project, onStatusChange }) {
   };
 
   return (
-    <div className="border shadow p-4 rounded-md w-[300px]">
-      <h2 className="text-blue-700 text-lg font-semibold">{project.nome}</h2>
-      <p className="text-sm text-gray-600 dark:text-[#f29100]">Criado em: {project.dataCriacao}</p>
+    <div className="border shadow p-4 rounded-md w-[300px] relative bg-[#1c2530] text-white">
 
-      <div className="mt-2">
+      {/* ✅ Bolinha de status */}
+      <div className="absolute top-3 right-3">
+        <span className={`w-3 h-3 rounded-full ${getStatusColor(project.status)}`}></span>
+      </div>
+
+      <h2 className="text-lg font-semibold">{project.nome}</h2>
+      <p className="text-sm opacity-80">Criado em: {project.dataCriacao}</p>
+
+      <div className="mt-3">
         <label className="text-sm font-medium">Status:</label>
         <select
           value={project.status}
           onChange={handleStatusChange}
-          className="block w-full mt-1 p-1 border rounded"
+          className="block w-full mt-1 p-1 rounded text-black"
         >
           <option value="Pendente">Pendente</option>
           <option value="Em andamento">Em andamento</option>
@@ -37,7 +58,7 @@ export default function ProjectCard({ project, onStatusChange }) {
 
       <button
         onClick={handleDelete}
-        className="mt-3 text-sm text-red-600 hover:underline"
+        className="mt-3 text-sm text-red-400 hover:text-red-200 transition font-semibold"
       >
         Excluir projeto
       </button>
