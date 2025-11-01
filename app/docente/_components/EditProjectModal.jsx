@@ -11,7 +11,7 @@ export function EditProjectModal({ projeto, onClose, onSave }) {
     setFormData((prev) => {
     // Se estiver alterando detalhesConvidados, atualiza também o boolean
     if (name === "detalhesConvidados") {
-      return { ...prev, [name]: value, convidados: value.trim() !== "" }; //value.trim() !== "" → se o textarea tiver algum texto, convidados vira true; se estiver vazio, vira false.
+      return { ...prev, [name]: value, convidados: value.trim() !== "" }; //value.trim() !== "" → Se o textarea tiver algum texto, convidados vira true; se estiver vazio, vira false.
     }
     return { ...prev, [name]: value };
   });
@@ -19,8 +19,8 @@ export function EditProjectModal({ projeto, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData); // chamando atualizarProjeto
-    onClose(); // fecha o modal
+    onSave(formData); // Chamando atualizarProjeto
+    onClose(); // Fecha o modal
   };
 
   return (
@@ -73,63 +73,6 @@ export function EditProjectModal({ projeto, onClose, onSave }) {
             className="w-full p-2 border rounded-lg"
             rows={2}
           />
-
-          {/* <div>
-            <label className="block text-sm">Nome do Projeto</label>
-            <input
-              type="text"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg text-shadow-white"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm">Observações</label>
-            <textarea
-              name="observacao"
-              value={formData.observacao}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg text-shadow-white"
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm">Membros</label>
-            <input
-              type="text"
-              name="membros"
-              value={formData.membros}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg  text-shadow-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm">Data de Apresentação</label>
-            <input
-              type="date"
-              name="dataApresentacao"
-              value={formData.dataApresentacao}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg  text-shadow-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm">A apresentação contará com a presença de convidados?</label>
-            <textarea
-              name="convidados"
-              value={formData.convidados}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-lg  text-shadow-white"
-              rows={2}
-            />
-          </div> */}
-
           <div className="flex justify-end gap-4 mt-4">
             <button
               type="button"

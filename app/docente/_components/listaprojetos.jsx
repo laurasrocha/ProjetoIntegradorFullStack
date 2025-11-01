@@ -12,7 +12,7 @@ function formatarComCasas(numero, casas) {
   return numero.toString().padStart(casas, "0");
 }
 
-// ✅ Componente SSR (sem "use client")
+// Componente SSR (sem "use client")
 export default function ListaProjetos({ projetos }) {
   // Ordenação ou filtragem podem ser feitos no server antes de passar para props
 
@@ -22,7 +22,7 @@ export default function ListaProjetos({ projetos }) {
         projetos.map((item) => (
           <Link
             key={item.id}
-            href={`/projetos/${item.id}`}
+            href={`/docente/${item.id}`}
             className="w-[95vw] sm:w-[400px]"
           >
             <Card className="w-[95vw] sm:w-[400px] shadow-2xl hover:tracking-wide sm:cursor-pointer flex flex-col items-center bg-slate-100 dark:bg-gray-800 transition-all duration-300 hover:scale-105">

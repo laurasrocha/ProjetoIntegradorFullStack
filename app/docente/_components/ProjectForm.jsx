@@ -4,7 +4,8 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
-import Botao from "./Botao";
+// 🚨 COMPONENTE Botao REMOVIDO DAQUI
+
 import {
   Sheet,
   SheetTrigger,
@@ -15,6 +16,20 @@ import {
 
 // URL do backend
 const URL_DOMINIO = process.env.NEXT_PUBLIC_URL_DOMINIO;
+
+// (SUBSTITUTO DO Botao.jsx)
+function SimpleButton({ children, className = "", ...props }) {
+  return (
+    <button
+      className={`w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
+  duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
+  active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
 
 export function ProjectForm({ buscarProjetos }) {
   // Controle do formulário
@@ -57,7 +72,7 @@ export function ProjectForm({ buscarProjetos }) {
       convidados: convidados === "sim",
       detalhesConvidados: convidados === "sim" ? detalhesConvidados : "",
       observacoes: temObservacao ? observacaoTexto : "",
-      usuarioId: 1, // se necessário, pode vir do auth
+      usuarioId: 1, // Se necessário, pode vir do auth
     };
 
     try {
@@ -70,11 +85,16 @@ export function ProjectForm({ buscarProjetos }) {
       // Limpa o formulário e fecha o Sheet
       resetForm();
       setOpen(false);
-      //atualiza a lista de projetoss
+      // Atualiza a lista de projetoss
       buscarProjetos();
     } catch (err) {
       console.error("Erro ao cadastrar projeto:", err);
-      toast.error(`Projeto "${dados.nome_projeto}" não foi criado.`);
+      // Garante que o erro seja uma string
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        `Projeto "${dados.nome_projeto}" não foi criado.`;
+      toast.error(errorMessage);
     }
   };
 
@@ -82,7 +102,7 @@ export function ProjectForm({ buscarProjetos }) {
     <div className="text-center space-x-4">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Botao>Novo Projeto</Botao>
+          <SimpleButton>Novo Projeto</SimpleButton>
         </SheetTrigger>
 
         <SheetContent className="bg-white p-0 dark:bg-gray-800">
@@ -96,7 +116,7 @@ export function ProjectForm({ buscarProjetos }) {
             {/* Nome */}
             <div>
               <label className="text-sm font-medium mb-1">
-                Qual será o nome do projeto?
+                Nome do Projeto
               </label>
               <input
                 type="text"
@@ -120,7 +140,9 @@ export function ProjectForm({ buscarProjetos }) {
 
             {/* Turma */}
             <div>
-              <label className="text-sm font-medium mb-1">Qual a turma?</label>
+              <label className="text-sm font-medium mb-1">
+                Código da Turma
+              </label>
               <input
                 type="text"
                 value={turma}
@@ -133,7 +155,7 @@ export function ProjectForm({ buscarProjetos }) {
             {/* Membros */}
             <div>
               <label className="text-sm font-medium mb-1">
-                Quem serão os membros do projeto?
+                Membros do Projeto
               </label>
               <input
                 type="text"
@@ -147,7 +169,7 @@ export function ProjectForm({ buscarProjetos }) {
             {/* Data de apresentação */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Qual será a data de apresentação?
+                Data de Apresentação
               </label>
               <input
                 type="date"
@@ -230,8 +252,10 @@ export function ProjectForm({ buscarProjetos }) {
 
             {/* Botões */}
             <div className="w-full space-y-4 flex flex-col justify-center items-center">
-              <Botao>Anexar fotos ao projeto</Botao>
-              <Botao onClick={handleSubmit}>Concluir cadastro</Botao>
+              <SimpleButton>Anexar fotos ao projeto</SimpleButton>
+              <SimpleButton onClick={handleSubmit}>
+                Concluir cadastro
+              </SimpleButton>
             </div>
           </div>
         </SheetContent>

@@ -27,7 +27,7 @@ export default function Page() {
     try {
       const res = await axios.get(`${URL_DOMINIO}/projetos`);
       //console.log(res);
-      setProjetos(res.data); // axios retorna o JSON em res.data
+      setProjetos(res.data); // Axios retorna o JSON em res.data
     } catch (err) {
       console.error("Erro ao buscar projetos:", err);
     }
@@ -106,10 +106,10 @@ export default function Page() {
         }
       />
 
-      <div className="w-full flex justify-between">
+      <div className="w-screen h-screen flex justify-between bg-slate-100 dark:bg-gray-900">
         <div className="flex flex-1 justify-start">
           {/* Sidebar */}
-          <div className="w-full sm:w-72 bg-gray-100 dark:bg-gray-900 shadow-md p-4 flex flex-col gap-6 h-[calc(100vh-80px)]">
+          <div className="w-full h-full sm:w-72 bg-slate-300  p-4 flex flex-col gap-6">
             <h2 className="text-lg font-semibold text-center">
               Gerenciar Projetos
             </h2>
@@ -147,6 +147,7 @@ export default function Page() {
               Todos os projetos em andamento
             </h1>
             <ListaProjetos projetos={projetos} />
+             <ProjectsGrid projetos={projetos} />
           </div>
           {/* -------------------------- TOAST TELA - MSG QUE APARECE APOS ALGUMA AÇÃO NA TELA ---------------------------------------------------------- */}
           <Toaster
@@ -170,7 +171,7 @@ export default function Page() {
               error: {
                 duration: 3000,
                 style: {
-                  background: "#ef4444", // vermelho
+                  background: "#ef4444", // Vermelho
                   boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                   position: "relative",
                   overflow: "hidden",
