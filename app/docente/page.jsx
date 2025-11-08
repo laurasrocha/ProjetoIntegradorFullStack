@@ -109,7 +109,7 @@ export default function Page() {
       <div className="w-screen h-screen flex justify-between bg-slate-100 dark:bg-gray-900">
         <div className="flex flex-1 justify-start">
           {/* Sidebar */}
-          <div className="w-full h-full sm:w-72 bg-slate-300  p-4 flex flex-col gap-6">
+          <div className="w-full h-full sm:w-72 bg-slate-100 dark:bg-gray-900  p-4 flex flex-col gap-6">
             <h2 className="text-lg font-semibold text-center">
               Gerenciar Projetos
             </h2>
@@ -147,7 +147,6 @@ export default function Page() {
               Todos os projetos em andamento
             </h1>
             <ListaProjetos projetos={projetos} />
-             <ProjectsGrid projetos={projetos} />
           </div>
           {/* -------------------------- TOAST TELA - MSG QUE APARECE APOS ALGUMA AÇÃO NA TELA ---------------------------------------------------------- */}
           <Toaster
