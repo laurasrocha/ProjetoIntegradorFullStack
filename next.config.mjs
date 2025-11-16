@@ -1,4 +1,23 @@
+import withPWA from "next-pwa";
+ 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-export default nextConfig;
+const nextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "blobs.vercel.com",
+            },
+        ],
+    },
+};
+const isProd = process.env.NODE_ENV === "development" ? false : true;
+// Configuração do PWA
+const withPWAConfig = withPWA({
+    dest: "public",
+    register: true,
+    skipWaiting: true,
+    disable: !isProd,
+})(nextConfig);
+ 
+export default withPWAConfig;
