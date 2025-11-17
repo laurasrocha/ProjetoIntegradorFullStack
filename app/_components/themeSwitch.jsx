@@ -1,3 +1,4 @@
+'use client'
 import { MdSunny } from "react-icons/md";
 import { IoIosMoon } from "react-icons/io";
 import useDarkMode from "../hooks/useDarkMode";
