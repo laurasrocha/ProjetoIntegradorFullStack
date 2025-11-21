@@ -39,7 +39,7 @@ export default function Login() {
                             hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
                             active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100 text-center flex items-center justify-center"
           >
-            Sair
+           TELA INICIAL
           </Link>
         }
         btnMobile={
@@ -49,7 +49,7 @@ export default function Login() {
                             hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
                             active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
           >
-            Sair
+            TELA INICIAL
           </Link>
         }
         btnPjMobile={

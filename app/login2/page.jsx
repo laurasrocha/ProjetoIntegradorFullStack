@@ -3,14 +3,27 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import Header from "../_components/header";
 import Link from "next/link";
-import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
 import ThemeSwitch from "../_components/themeSwitch";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export default function login2() {
-  const sucesso = () => {
-    toast.success("Enviamos no seu email");
+  // const sucesso = () => {
+  //   toast.success("Enviamos no seu email");
+  // };
+  const [email, setEmail] = useState("");
+
+  const handleForgot = async () => {
+    const response = await fetch("/api/password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await response.json();
+    alert(data.message);
   };
+
 
   return (
     <div className="w-screen h-screen bg-slate-100 dark:bg-gray-900">
@@ -23,7 +36,7 @@ export default function login2() {
                     active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
                     items-center justify-center text-center"
           >
-            Sair
+            SAIR
           </Link>
         }
         btnMobile={
@@ -33,28 +46,27 @@ export default function login2() {
                     hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
                     active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
           >
-            <HiMiniArrowRightStartOnRectangle className="w-[35px]" size={18} />
-            Sair
+            SAIR
           </Link>
         }
         btnPjMobile={
           <Link
-            href="/projetos"
+            href="/login"
             className="w-[60vw] h-[40px] mt-8 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
                         hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
                         active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
           >
-            VER PROJETOS{" "}
+            TELA LOGIN
           </Link>
         }
         btnPjDesktop={
           <Link
-            href="/projetos"
+            href="/login"
             className="w-[160px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] font-semibold py-3 rounded-2xl bg-white shadow-md text-xs tracking-wider uppercase transition-all duration-500 ease-in-out
                      hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
                     active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100"
           >
-            VER PROJETOS
+            TELA LOGIN
           </Link>
         }
       />
@@ -72,12 +84,14 @@ export default function login2() {
               <h2 className="text-[#004A8D] dark:text-white text-xs font-sans font-semibold sm:text-lg flex text-start">
                 Digite seu e-mail
               </h2>
-              <Input className="text-[#004A8D] dark:text-slate-200 border-2 border-[#004A8D] font-semibold text-sm w-[60vw] sm:w-[40vw] mt-1" />
+              <Input
+                type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                className="text-[#004A8D] dark:text-slate-200 border-2 border-[#004A8D] font-semibold text-sm w-[60vw] sm:w-[40vw] mt-1" />
             </div>
 
             <div className="flex w-full justify-center">
               <button
-                onClick={sucesso}
+                onClick={handleForgot}
                 className="w-[40vw] h-[40px] sm:w-[200px] mt-8 cursor-pointer text-white rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
                             hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
                             active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100"

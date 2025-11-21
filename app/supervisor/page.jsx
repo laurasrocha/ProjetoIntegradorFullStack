@@ -10,8 +10,8 @@ import { useEffect } from "react";
 import ThemeSwitch from "../_components/themeSwitch";
 import { ToastProvider } from "../_components/ToastProvider";
 import { toast } from "sonner";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+// import { Checkbox } from "@/components/ui/checkbox";
+// import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button"
 
@@ -146,13 +146,13 @@ export default function SupervisorPage() {
                 <option className="dark:text-black" value="concluído">
                   Pendente
                 </option>
-         
+
               </select>
-     
+
             </div>
           </div>
           <div className="flex justify-end p-2">
-      
+
             <ThemeSwitch />
           </div>
         </div>
@@ -164,40 +164,40 @@ export default function SupervisorPage() {
                 key={project.id}
                 className="w-[250px] p-4 bg-white dark:bg-gray-800 shadow-md rounded-lg flex flex-col"
               >
-<select
-                className="w-[105px] h-[35px] border-2  border-[#004A8D] text-black dark:text-white px-1 py-1 ml-auto rounded"
-         
-              >
-                <option className="dark:text-black" value="">
-                  Status 
-                </option>
-                <option className="dark:text-black" value="pendente">
-                  Aprovado
-                </option>
-                <option className="dark:text-black" value="em andamento">
-                  Recusado
-                </option>
-                <option className="dark:text-black" value="concluído">
-                  Pendente
-                </option>
-        
-              </select>
+                <select
+                  className="w-[105px] h-[35px] border-2  border-[#004A8D] text-black dark:text-white px-1 py-1 ml-auto rounded"
 
-           
+                >
+                  <option className="dark:text-black" value="">
+                    Status
+                  </option>
+                  <option className="dark:text-black" value="pendente">
+                    Aprovado
+                  </option>
+                  <option className="dark:text-black" value="em andamento">
+                    Recusado
+                  </option>
+                  <option className="dark:text-black" value="concluído">
+                    Pendente
+                  </option>
 
-                 
-                  <h3 className="text-lg w-28 font-semibold text-[#004A8D] dark:text-white">
-                    {project.nome_projeto}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                    Desenvolvido por: {project.membros_projeto}
-                  </p>
-                  <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
-                
-                    Turma: {project.turma_projeto}
-                  </span>
-                     <Button variant="link"className={"ml-auto mt-auto"}>Ver Mais</Button>
-     
+                </select>
+
+
+
+
+                <h3 className="text-lg w-28 font-semibold text-[#004A8D] dark:text-white">
+                  {project.nome_projeto}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                  Desenvolvido por: {project.membros_projeto}
+                </p>
+                <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+
+                  Turma: {project.turma_projeto}
+                </span>
+                <Button variant="link" className={"ml-auto mt-auto"}>Ver Mais</Button>
+
 
               </div>
 
@@ -217,7 +217,7 @@ export default function SupervisorPage() {
             <h2 className="text-lg font-semibold text-black dark:text-white text-center">
               Ações do Supervisor
             </h2>
-          
+
             <div className="mt-4">
               <textarea
                 value={feedback}
