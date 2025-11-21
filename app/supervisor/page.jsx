@@ -10,13 +10,13 @@ import { useEffect } from "react";
 import ThemeSwitch from "../_components/themeSwitch";
 import { ToastProvider } from "../_components/ToastProvider";
 import { toast } from "sonner";
-// import { Checkbox } from "@/components/ui/checkbox";
-// import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button"
-
-
-
+ 
+ 
+ 
 export default function SupervisorPage() {
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,7 +37,7 @@ export default function SupervisorPage() {
     toast.success(`Feedback enviado: ${feedback}`);
     setFeedback("");
   };
-
+ 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -52,18 +52,18 @@ export default function SupervisorPage() {
     };
     fetchProjects();
   }, []);
-
+ 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
       project.nome_projeto.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.membros_projeto.toLowerCase().includes(searchTerm.toLowerCase());
-
+ 
     const matchesStatus =
       statusFilter === "" || project.status === statusFilter; // só se você tiver campo status
-
+ 
     return matchesSearch && matchesStatus;
   });
-
+ 
   return (
     <div className="w-screen min-h-screen bg-slate-100 dark:bg-gray-900">
       <Header
@@ -110,7 +110,7 @@ export default function SupervisorPage() {
           </Link>
         }
       />
-
+ 
       <div className="w-full flex flex-col mt-2 space-y-6 px-1">
         {showForm && (
           <ProjectForm onProjectAdded={() => window.location.reload()} />
@@ -128,7 +128,7 @@ export default function SupervisorPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-
+ 
               <select
                 className="w-[300px] h-[35px] border-2 border-[#004A8D] text-black dark:text-white px-2 py-1 rounded"
                 value={statusFilter}
@@ -146,13 +146,13 @@ export default function SupervisorPage() {
                 <option className="dark:text-black" value="concluído">
                   Pendente
                 </option>
-
+ 
               </select>
-
+ 
             </div>
           </div>
           <div className="flex justify-end p-2">
-
+ 
             <ThemeSwitch />
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function SupervisorPage() {
               >
                 <select
                   className="w-[105px] h-[35px] border-2  border-[#004A8D] text-black dark:text-white px-1 py-1 ml-auto rounded"
-
+ 
                 >
                   <option className="dark:text-black" value="">
                     Status
@@ -180,12 +180,12 @@ export default function SupervisorPage() {
                   <option className="dark:text-black" value="concluído">
                     Pendente
                   </option>
-
+ 
                 </select>
-
-
-
-
+ 
+ 
+ 
+ 
                 <h3 className="text-lg w-28 font-semibold text-[#004A8D] dark:text-white">
                   {project.nome_projeto}
                 </h3>
@@ -193,16 +193,16 @@ export default function SupervisorPage() {
                   Desenvolvido por: {project.membros_projeto}
                 </p>
                 <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
-
+ 
                   Turma: {project.turma_projeto}
                 </span>
                 <Button variant="link" className={"ml-auto mt-auto"}>Ver Mais</Button>
-
-
+ 
+ 
               </div>
-
-
-
+ 
+ 
+ 
             ))
           ) : (
             <p className="text-gray-600 dark:text-gray-300">
@@ -210,14 +210,14 @@ export default function SupervisorPage() {
             </p>
           )}
         </div>
-
-
+ 
+ 
         <div className="w-full flex items-center justify-center">
           <div className="w-[90%] max-w-md mt-8 border-t border-gray-300 pt-6 space-y-4">
             <h2 className="text-lg font-semibold text-black dark:text-white text-center">
               Ações do Supervisor
             </h2>
-
+ 
             <div className="mt-4">
               <textarea
                 value={feedback}
@@ -241,3 +241,4 @@ export default function SupervisorPage() {
     </div>
   );
 }
+ 
