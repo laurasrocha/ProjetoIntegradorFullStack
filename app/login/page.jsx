@@ -30,14 +30,14 @@ export default function Login() {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col  ">
+    <div className="w-screen h-screen flex flex-col">
       <Header
         btnDesktop={
           <Link
             href="/"
-            className="w-[140px] h-[40px] sm:block cursor-pointer text-[#004A8D] py-3 rounded-2xl bg-white shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
-                            hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
-                            active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100 text-center flex items-center justify-center"
+            className="w-[160px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] font-semibold py-3 rounded-2xl bg-white shadow-md text-xs tracking-wider uppercase transition-all duration-500 ease-in-out
+                     hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
+                    active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100"
           >
            TELA INICIAL
           </Link>
@@ -65,9 +65,9 @@ export default function Login() {
         btnPjDesktop={
           <Link
             href="/projetos"
-            className="w-[160px] h-[40px] sm:block cursor-pointer text-[#004A8D] font-semibold py-3 rounded-2xl bg-white shadow-md text-xs tracking-wider uppercase transition-all duration-500 ease-in-out
-                            hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
-                            active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100 text-center flex items-center justify-center"
+            className="w-[160px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] font-semibold py-3 rounded-2xl bg-white shadow-md text-xs tracking-wider uppercase transition-all duration-500 ease-in-out
+                     hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
+                    active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100"
           >
             VER PROJETOS
           </Link>
@@ -102,13 +102,13 @@ export default function Login() {
           </div>
 
           {/* Card de login */}
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-2xl rounded-2xl p-8 sm:p-10 w-[90%] sm:w-[420px] flex flex-col items-center mt-6 animate-fadeIn">
+          <div className="bg-slate-100 dark:bg-gray-900 sm:bg-white/80 sm:dark:bg-gray-800/80 backdrop-blur-lg sm:shadow-2xl rounded-2xl p-8 sm:p-10 w-[95vw] sm:w-[420px] flex flex-col items-center sm:mt-6 animate-fadeIn">
             <h1 className="text-3xl font-bold tracking-wide drop-shadow-md text-[#004A8D] dark:text-white">
               Login
             </h1>
 
             <div className="p-4 flex items-center space-x-4 mt-10">
-              <span className="text-[#004A8D] dark:text-white font-semibold text-sm">
+              <span className="text-[#004A8D] dark:text-white font-semibold text-xs">
                 Docente
               </span>
 
@@ -118,17 +118,17 @@ export default function Login() {
                 className="bg-[#f29100] data-[state=checked]:bg-[#004A8D]"
               />
 
-              <span className="text-[#004A8D] dark:text-white font-sans font-semibold text-sm">
+              <span className="text-[#004A8D] dark:text-white font-sans font-semibold text-xs">
                 Supervisão
               </span>
             </div>
 
             <div className="flex flex-col items-center space-y-4 w-full mt-6">
               <Input
-                placeholder="Login"
+                placeholder="User"
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
-                className="border-2 border-[#004A8D] w-[350px] h-[43px] text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
+                className="border-2 border-[#004A8D] w-[80vw] h-[35px] sm:w-[350px] sm:h-[43px] text-xs sm:text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
               />
 
               <Input
@@ -136,14 +136,14 @@ export default function Login() {
                 type="password"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
-                className="border-2 border-[#004A8D] w-[350px] h-[43px] text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
+                className="border-2 border-[#004A8D] w-[80vw] h-[35px] sm:w-[350px] sm:h-[43px] text-xs sm:text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
               />
             </div>
 
             <div className="flex flex-col items-center w-full mt-6">
               <button
                 onClick={handleLogin}
-                className="w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-center text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF] active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 mt-4"
+                className="w-[150px] h-[35px] sm:w-[200px] sm:h-[40px] cursor-pointer text-center text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF] active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 mt-4"
               >
                 Entrar
               </button>

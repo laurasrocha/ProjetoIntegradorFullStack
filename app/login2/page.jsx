@@ -36,7 +36,7 @@ export default function login2() {
                     active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
                     items-center justify-center text-center"
           >
-            SAIR
+            TELA INICIAL
           </Link>
         }
         btnMobile={
@@ -46,7 +46,7 @@ export default function login2() {
                     hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
                     active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
           >
-            SAIR
+            TELA INICIAL
           </Link>
         }
         btnPjMobile={
@@ -79,14 +79,14 @@ export default function login2() {
           <h1 className="text-[#004A8D] dark:text-white text-lg font-sans font-semibold sm:text-2xl mb-6 sm:mb-14">
             Recupere sua senha
           </h1>
-          <div className="w-[80vw] h-full flex flex-col items-center">
+          <div className="w-[90vw] h-full flex flex-col items-center">
             <div className="p-2">
               <h2 className="text-[#004A8D] dark:text-white text-xs font-sans font-semibold sm:text-lg flex text-start">
                 Digite seu e-mail
               </h2>
               <Input
                 type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                className="text-[#004A8D] dark:text-slate-200 border-2 border-[#004A8D] font-semibold text-sm w-[60vw] sm:w-[40vw] mt-1" />
+                className="border-2 border-[#004A8D] w-[90vw] h-[35px] sm:w-[350px] sm:h-[43px] text-xs sm:text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"/>
             </div>
 
             <div className="flex w-full justify-center">

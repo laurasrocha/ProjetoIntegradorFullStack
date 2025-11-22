@@ -11,30 +11,30 @@ import {
 import { BsList } from "react-icons/bs";
 import Image from 'next/image';
 import Link from 'next/link';
-import ThemeSwitch from './themeSwitch';
+import ThemeMobile from './themeMobile';
 
 
 export default function Header({ btnDesktop, btnMobile, btnPjMobile, btnPjDesktop }) {
 
     return (
-        <div className='flex flex-col w-full border-b-4 border-[#f29100]'>
-            <div className='bg-[#004A8D] w-full h-20 flex'>
-                <div className="flex justify-between w-full p-3">
+        <div className='flex flex-col w-screen border-b-4 border-[#f29100]'>
+            <div className='bg-[#004A8D] w-full h-[10vh] sm:h-20 flex'>
+                <div className="w-full flex justify-between p-2 sm:p-3">
                     <Link href="/">
                         <Image
                             src="/logosenacbranco.png"
                             alt="Logo senac"
-                            width={85}
+                            width={70}
                             height={80}
                             className="sm:w-[100px]"
                         />
                     </Link>
 
                     <Sheet>
-                        <SheetTrigger><BsList className="text-[#f29100] sm:hidden" size={35} /></SheetTrigger>
+                        <SheetTrigger><BsList className="text-[#f29100] sm:hidden" size={32} /></SheetTrigger>
                         <SheetContent>
                             <SheetHeader className="flex items-center">
-                                <SheetTitle><ThemeSwitch /></SheetTitle>
+                                <SheetTitle><ThemeMobile/></SheetTitle>
                                 <SheetDescription>
                                   
                                     <button>{btnPjMobile}</button>
@@ -49,7 +49,7 @@ export default function Header({ btnDesktop, btnMobile, btnPjMobile, btnPjDeskto
                     <button>{btnPjDesktop}</button>
                     <button>{btnDesktop}</button>
                 </div>
-                <div className="w-[40px]"></div>
+                <div className="hidden sm:block w-[40px]"></div>
             </div>
         </div>
     );

@@ -3,13 +3,13 @@ import { MdSunny } from "react-icons/md";
 import { IoIosMoon } from "react-icons/io";
 import useDarkMode from "../hooks/useDarkMode";
 
-export default function ThemeSwitch() {
+export default function ThemeMobile() {
   const [darkMode, setDarkMode] = useDarkMode();
 
   if (darkMode === null) return null;
 
   return (
-    <div className="hidden sm:block">
+    <div className="block sm:hidden">
       <button
         onClick={() => setDarkMode(!darkMode)}
         className="relative flex items-center justify-between w-12 h-6 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors duration-300 px-1 m-2"
