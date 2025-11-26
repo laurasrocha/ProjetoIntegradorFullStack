@@ -21,13 +21,32 @@ export default function Login() {
     toast.success(checked ? "Olá, Supervisor(a)" : "Olá, Docente");
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!user.trim() || !senha.trim()) {
       toast.error("Por favor, preencha os campos corretamente!");
       return;
     }
+
+    const res = await fetch("/api/login_user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user, senha }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast.error(data.error);
+      return;
+    }
+
+    toast.success("Login realizado com sucesso!");
+
+    // Redirecionamento baseado no tipo de usuário
     router.replace(supervisor ? "/supervisor" : "/docente");
   };
+
+
 
   return (
     <div className="w-screen h-screen flex flex-col">
@@ -39,7 +58,7 @@ export default function Login() {
                      hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
                     active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100"
           >
-           TELA INICIAL
+            TELA INICIAL
           </Link>
         }
         btnMobile={
@@ -125,7 +144,7 @@ export default function Login() {
 
             <div className="flex flex-col items-center space-y-4 w-full mt-6">
               <Input
-                placeholder="User"
+                placeholder="Email"
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
                 className="border-2 border-[#004A8D] w-[80vw] h-[35px] sm:w-[350px] sm:h-[43px] text-xs sm:text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"

@@ -126,16 +126,17 @@ export const UsuariosService = {
       const novoUsuario = await prisma.usuarios.create({
         data: {
           nome_usuario: dados.nome_usuario,
-          email_usuario : dados.email_usuario,
-          senha_cripto : dados.senha_cripto,
-          tipo_usuario: dados.TipoUsuario,
+          email_usuario: dados.email_usuario,
+          senha_cripto: dados.senha_cripto,
+          tipo_usuario: dados.tipo_usuario,
 
-          projetos: dados.projetos,
+          // projetos: dados.projetos,
         },
       });
 
-      console.log(" Projeto criado:", novoUsuario);
+      console.log("Projeto criado:", novoUsuario);
       return novoUsuario;
+      
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.error(`⚠️ Erro Prisma (create): ${error.code}`);

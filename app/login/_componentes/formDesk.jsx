@@ -20,7 +20,7 @@ export default function FormDesk() {
     const [email_usuario, setEmail] = useState("");
     const [senha_cripto, setSenha] = useState("");
     const [confSenha, setConfSenha] = useState("");
-    const [TipoUsuario, setTipoUser] = useState("");
+    const [tipo_usuario, setTipoUser] = useState("");
 
     // Limpar campos
     function resetForm() {
@@ -38,7 +38,7 @@ export default function FormDesk() {
             !email_usuario ||
             !senha_cripto ||
             !confSenha ||
-            !TipoUsuario
+            !tipo_usuario
         ) {
             alert("Preencha todos os campos!");
             return;
@@ -54,7 +54,7 @@ export default function FormDesk() {
                 nome_usuario,
                 email_usuario,
                 senha_cripto,
-                TipoUsuario,
+                tipo_usuario,
             };
 
             console.log("Enviando dados:", dados);
@@ -98,7 +98,7 @@ export default function FormDesk() {
                                     className="bg-slate-100 dark:bg-gray-800 border-2 border-[#004A8D] w-[350px] h-[43px] text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
                                 />
 
-                                <Select value={TipoUsuario} onValueChange={setTipoUser}>
+                                <Select value={tipo_usuario} onValueChange={setTipoUser}>
                                     <SelectTrigger className="w-[350px] h-[43px] border-2 border-[#004A8D] font-semibold rounded-xl">
                                         <SelectValue
                                             placeholder="Tipo de Usuário"
@@ -159,9 +159,9 @@ export default function FormDesk() {
                                         <button
                                             onClick={cadastrar}
                                             className="w-[350px] h-[40px] hidden sm:block cursor-pointer text-white py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
-                        hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
-                        active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
-                        items-center justify-center text-center"
+                                                hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
+                                                 active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
+                                                 items-center justify-center text-center"
                                         >
                                             Cadastrar
                                         </button>

@@ -1,7 +1,8 @@
 // route usuários
 import { NextResponse } from "next/server";
 import { UsuariosService } from "./usuariosService";
-//LOG NO BACK-END CASO DESEJA 
+import bcrypt from "bcrypt";
+
 
 export async function GET() {
   const usuarios = await UsuariosService.getAll();
@@ -11,20 +12,30 @@ export async function GET() {
 export async function POST(req) {
 
   try {
-    //  Converte o corpo da requisição para JSON
     const dados = await req.json();
 
-    console.log(" Dados recebidos do frontend:", dados);
+    console.log("Dados recebidos do frontend:", dados);
 
-    // Chama o model passando os dados
+    if (!dados.senha_cripto) {
+      return NextResponse.json(
+        { error: "Senha é obrigatória" },
+        { status: 400 }
+      );
+    }
+
+    // 🔐 Criptografar a senha ANTES de enviar para o service
+    const senhaHash = await bcrypt.hash(dados.senha_cripto, 10);
+
+    // Substituir senha normal pela criptografada
+    dados.senha_cripto = senhaHash;
+    delete dados.senha;
+
     const resultado = await UsuariosService.create(dados);
 
-    //Retorna resposta JSON
     return NextResponse.json(resultado, { status: 200 });
 
   } catch (error) {
     console.error("Erro no POST /api/usuarios:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
 }
