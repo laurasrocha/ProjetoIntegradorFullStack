@@ -1,35 +1,21 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  //output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-}
-
-//tabelas com seus respectivos campos
-// ENUM para tipo de usuário
-enum TipoUsuario {
-  DOCENTE
-  SUPERVISOR
-  DIRETOR
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model usuarios {
-  UUID          String      @unique @default(uuid())
-  id            Int         @id @unique @default(autoincrement())
-  nome_usuario  String
-  email_usuario String
-  senha_cripto  String
-  tipo_usuario  TipoUsuario // agora é ENUM
-
-  // Relação 1:N
-  projetos            projetos[] // um usuário pode ter vários projetos
+  UUID                String               @unique @default(uuid())
+  id                  Int                  @id @unique @default(autoincrement())
+  nome_usuario        String
+  email_usuario       String               @unique
+  senha_cripto        String
+  tipo_usuario        TipoUsuario
   passwordResetTokens PasswordResetToken[]
+  projetos            projetos[]
 }
 
 model PasswordResetToken {
@@ -37,8 +23,7 @@ model PasswordResetToken {
   token     String   @unique
   userId    Int
   expiresAt DateTime
-
-  usuario usuarios @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usuario   usuarios @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model projetos {
@@ -51,13 +36,17 @@ model projetos {
   data_criacao       DateTime? @default(now())
   data_apresentacao  String
   convidados         Boolean
-  detalhesConvidados String? // permite ser null ou string vazia
+  detalhesConvidados String?
   observacoes        String
   status_projeto     String?   @default("Pendente")
   updatedAt          DateTime? @default(now())
   createdAt          DateTime? @default(now())
+  usuarioId          Int
+  usuario            usuarios  @relation(fields: [usuarioId], references: [id])
+}
 
-  // FK para usuários
-  usuarioId Int
-  usuario   usuarios @relation(fields: [usuarioId], references: [id])
+enum TipoUsuario {
+  DOCENTE
+  SUPERVISOR
+  DIRETOR
 }
