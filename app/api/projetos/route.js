@@ -1,28 +1,73 @@
 import { NextResponse } from "next/server";
-import { ProjetoService } from "./projetosService";
-//LOG NO BACK-END CASO DESEJA 
+import { prisma } from "@/lib/prisma";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
+
 export async function GET() {
-  const projetos = await ProjetoService.getAll();
-  return NextResponse.json(projetos);
+  try {
+    const projetos = await prisma.projetos.findMany({ orderBy: { id: "desc" } });
+    return NextResponse.json(projetos);
+  } catch (error) {
+    return NextResponse.json({ error: "Erro" }, { status: 500 });
+  }
 }
 
 export async function POST(req) {
-
   try {
-    //  Converte o corpo da requisição para JSON
-    const dados = await req.json();
+    const formData = await req.formData();
 
-    console.log(" Dados recebidos do frontend:", dados);
+    // (Extração dos campos de texto continua igual)
+    const nome_projeto = formData.get("nome_projeto");
+    const descricao = formData.get("descricao");
+    const membros_projeto = formData.get("membros_projeto");
+    const turma_projeto = formData.get("turma_projeto");
+    const data_apresentacao = formData.get("data_apresentacao");
+    const convidados = formData.get("convidados") === "true";
+    const detalhesConvidados = formData.get("detalhesConvidados");
+    const observacoes = formData.get("observacoes");
+    const usuarioId = 1; 
 
-    // Chama o model passando os dados
-    const resultado = await ProjetoService.create(dados);
+    const arquivos = formData.getAll("arquivos");
+    const caminhosSalvos = [];
 
-    //Retorna resposta JSON
-    return NextResponse.json(resultado, { status: 200 });
+    const uploadDir = path.join(process.cwd(), "public/uploads");
+    try { await mkdir(uploadDir, { recursive: true }); } catch (e) {}
+
+    for (const file of arquivos) {
+      if (file && file.name) {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const nomeArquivo = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
+        await writeFile(path.join(uploadDir, nomeArquivo), buffer);
+        caminhosSalvos.push(`/uploads/${nomeArquivo}`);
+      }
+    }
+
+    // ORDENAÇÃO INTELIGENTE (FOTOS PRIMEIRO)
+    caminhosSalvos.sort((a, b) => {
+        const aEhPdf = a.toLowerCase().endsWith('.pdf');
+        const bEhPdf = b.toLowerCase().endsWith('.pdf');
+        
+        // Se A é PDF e B não é, joga A pro final (retorna 1)
+        if (aEhPdf && !bEhPdf) return 1;
+        // Se A não é PDF e B é, joga A pro começo (retorna -1)
+        if (!aEhPdf && bEhPdf) return -1;
+        // Se forem iguais, mantém a ordem
+        return 0;
+    });
+
+    const projetoCriado = await prisma.projetos.create({
+      data: {
+        nome_projeto, descricao, membros_projeto, turma_projeto,
+        data_apresentacao, convidados, detalhesConvidados, observacoes,
+        usuarioId,
+        fotos: caminhosSalvos.join(","), // Salva já ordenado
+      },
+    });
+
+    return NextResponse.json(projetoCriado, { status: 201 });
 
   } catch (error) {
-    console.error("Erro no POST /api/projetos:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Erro POST:", error);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
-
 }
