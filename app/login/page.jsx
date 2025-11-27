@@ -22,11 +22,6 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
-    if (!user.trim() || !senha.trim()) {
-      toast.error("Por favor, preencha os campos corretamente!");
-      return;
-    }
-
     const res = await fetch("/api/login_user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -40,10 +35,20 @@ export default function Login() {
       return;
     }
 
-    toast.success("Login realizado com sucesso!");
+    toast.success("Login realizado!");
 
-    // Redirecionamento baseado no tipo de usuário
-    router.replace(supervisor ? "/supervisor" : "/docente");
+    // Aqui o backend já criou o cookie,
+    // então só redirecionar:
+
+    // BUSCAR TIPO DO USUÁRIO
+    const response = await fetch("/api/me");
+    const userData = await response.json();
+
+    if (userData.tipo === "SUPERVISOR") {
+      router.push("/supervisor");
+    } else {
+      router.push("/docente");
+    }
   };
 
 
