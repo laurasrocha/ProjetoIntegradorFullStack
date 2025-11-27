@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react"; 
 import axios from "axios";
 import { toast } from "sonner";
-
-// 🚨 COMPONENTE Botao REMOVIDO DAQUI
 
 import {
   Sheet,
@@ -17,13 +15,12 @@ import {
 // URL do backend
 const URL_DOMINIO = process.env.NEXT_PUBLIC_URL_DOMINIO;
 
-// (SUBSTITUTO DO Botao.jsx)
 function SimpleButton({ children, className = "", ...props }) {
   return (
     <button
       className={`w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
-  duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-  active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 ${className}`}
+      duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
+      active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 ${className}`}
       {...props}
     >
       {children}
@@ -44,6 +41,10 @@ export function ProjectForm({ buscarProjetos }) {
   const [temObservacao, setTemObservacao] = useState(false);
   const [observacaoTexto, setObservacaoTexto] = useState("");
 
+  // NOVOS ESTADOS E REF PARA ARQUIVOS
+  const [arquivos, setArquivos] = useState([]);
+  const fileInputRef = useRef(null);
+
   // Função para resetar todos os campos
   const resetForm = () => {
     setNome("");
@@ -55,6 +56,33 @@ export function ProjectForm({ buscarProjetos }) {
     setDetalhesConvidados("");
     setTemObservacao(false);
     setObservacaoTexto("");
+    setArquivos([]); // Limpa os arquivos também
+  };
+
+  // LÓGICA DE SELEÇÃO DE ARQUIVOS
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFiles = Array.from(e.target.files);
+      const allowedTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "application/pdf",
+      ];
+      const validFiles = selectedFiles.filter((file) =>
+        allowedTypes.includes(file.type)
+      );
+
+      if (validFiles.length !== selectedFiles.length) {
+        toast.warning("Apenas imagens (PNG, JPG) e PDFs são permitidos.");
+      }
+
+      setArquivos((prev) => [...prev, ...validFiles]);
+    }
+  };
+
+  const removeFile = (indexToRemove) => {
+    setArquivos((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
   // Função de submit
@@ -63,24 +91,36 @@ export function ProjectForm({ buscarProjetos }) {
       return toast.error("Preencha os campos obrigatórios.");
     }
 
-    const dados = {
-      nome_projeto: nome,
-      descricao,
-      membros_projeto: membros,
-      turma_projeto: turma,
-      data_apresentacao: data,
-      convidados: convidados === "sim",
-      detalhesConvidados: convidados === "sim" ? detalhesConvidados : "",
-      observacoes: temObservacao ? observacaoTexto : "",
-      usuarioId: 1, // Se necessário, pode vir do auth
-    };
+    // MUDANÇA CRÍTICA: USAR FORMDATA AO INVÉS DE JSON SIMPLES
+    const formData = new FormData();
+    formData.append("nome_projeto", nome);
+    formData.append("descricao", descricao);
+    formData.append("membros_projeto", membros);
+    formData.append("turma_projeto", turma);
+    formData.append("data_apresentacao", data);
+    formData.append("convidados", convidados === "sim");
+    formData.append(
+      "detalhesConvidados",
+      convidados === "sim" ? detalhesConvidados : ""
+    );
+    formData.append("observacoes", temObservacao ? observacaoTexto : "");
+    formData.append("usuarioId", 1); 
+
+    // Adiciona os arquivos ao FormData
+    arquivos.forEach((file) => {
+      formData.append("arquivos", file); 
+    });
 
     try {
-      const res = await axios.post(`${URL_DOMINIO}/projetos`, dados);
-      console.log("Dados enviados:", dados);
-      console.log("Resposta do backend:", res.data);
+      // Envia com o header correto para arquivos
+      const res = await axios.post(`${URL_DOMINIO}/projetos`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      toast.success(`Projeto "${dados.nome_projeto}" criado com sucesso.`);
+      console.log("Resposta do backend:", res.data);
+      toast.success(`Projeto "${nome}" criado com sucesso.`);
 
       // Limpa o formulário e fecha o Sheet
       resetForm();
@@ -93,7 +133,7 @@ export function ProjectForm({ buscarProjetos }) {
       const errorMessage =
         err.response?.data?.message ||
         err.message ||
-        `Projeto "${dados.nome_projeto}" não foi criado.`;
+        `Projeto "${nome}" não foi criado.`;
       toast.error(errorMessage);
     }
   };
@@ -104,15 +144,14 @@ export function ProjectForm({ buscarProjetos }) {
         <SheetTrigger asChild>
           <SimpleButton>Novo Projeto</SimpleButton>
         </SheetTrigger>
-
-        <SheetContent className="bg-white p-0 dark:bg-gray-800">
+        <SheetContent className="bg-white p-0 dark:bg-gray-800 overflow-y-auto">
           <SheetHeader className="p-4 border-b">
             <SheetTitle className="text-center mt-2">
               Cadastrar Novo Projeto
             </SheetTitle>
           </SheetHeader>
 
-          <div className="p-4 overflow-y-auto max-h-[calc(100vh-100px)] flex flex-col space-y-4">
+          <div className="p-4 flex flex-col space-y-4">
             {/* Nome */}
             <div>
               <label className="text-sm font-medium mb-1">
@@ -250,9 +289,48 @@ export function ProjectForm({ buscarProjetos }) {
               )}
             </div>
 
-            {/* Botões */}
-            <div className="w-full space-y-4 flex flex-col justify-center items-center">
-              <SimpleButton>Anexar fotos ao projeto</SimpleButton>
+            {/* BOTÕES E UPLOAD */}
+            <div className="w-full space-y-4 flex flex-col justify-center items-center pb-6">
+              {/* Input invisível para arquivos */}
+              <input
+                type="file"
+                multiple
+                accept=".jpg,.jpeg,.png,.pdf"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={handleFileChange}
+              />
+
+              {/* Botão que aciona o input invisível */}
+              <SimpleButton onClick={() => fileInputRef.current?.click()}>
+                Anexar fotos ao projeto
+              </SimpleButton>
+
+              {/* Lista de arquivos selecionados */}
+              {arquivos.length > 0 && (
+                <div className="w-full bg-gray-50 dark:bg-gray-700 p-2 rounded border text-sm">
+                  <p className="font-bold mb-2">Arquivos selecionados:</p>
+                  <ul className="list-disc list-inside">
+                    {arquivos.map((file, index) => (
+                      <li
+                        key={index}
+                        className="flex justify-between items-center"
+                      >
+                        <span className="truncate max-w-[180px]">
+                          {file.name}
+                        </span>
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="text-red-500 text-xs hover:underline ml-2"
+                        >
+                          Remover
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <SimpleButton onClick={handleSubmit}>
                 Concluir cadastro
               </SimpleButton>

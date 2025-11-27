@@ -6,7 +6,7 @@ import Link from "next/link";
 import CloseButton from "@/app/docente/[id]/_components/CloseButton";
 import BtnEditar from "@/app/docente/[id]/_components/btnEditar";
 import ProjectsGrid from "@/app/supervisor/_components/ProjectsGrid";
-import { ProjetoDetalheCard } from "./_components/card"; // Importação correta
+import { ProjetoDetalheCard } from "./_components/card"; 
 
 // URL de retorno (página principal da lista de projetos)
 const URL_VOLTAR = "/docente"; 
@@ -71,11 +71,8 @@ export default async function ProjetoDetalhe({ params }) {
             </Link>
           }
         />
-        
-        {/* CORREÇÃO: REMOVEMOS A PROPRIEDADE onBack */}
         <ProjetoDetalheCard
           projeto={projeto}
-          // onBack não é mais necessário, pois a navegação é feita pelo Header
         />
       </div>
     );

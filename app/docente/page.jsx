@@ -16,6 +16,7 @@ import ListaProjetos from "./_components/listaprojetos";
 
 //Pegando a variaverl URL_DOMINIO
 const URL_DOMINIO = process.env.NEXT_PUBLIC_URL_DOMINIO;
+
 export default function Page() {
   const [projetos, setProjetos] = useState([]);
   const [busca, setBusca] = useState("");
@@ -57,6 +58,27 @@ export default function Page() {
     }
   };
 
+  const projetosFiltrados = projetos
+    .filter((projeto) => {
+      // FILTRO (Busca)
+      const termo = busca.toLowerCase();
+      const nomeProjeto = projeto.nome_projeto
+        ? projeto.nome_projeto.toLowerCase()
+        : "";
+      return nomeProjeto.includes(termo);
+    })
+    .slice() 
+    .sort((a, b) => {
+      const nomeA = a.nome_projeto ? a.nome_projeto.toLowerCase() : "";
+      const nomeB = b.nome_projeto ? b.nome_projeto.toLowerCase() : "";
+
+      if (ordenacao === "az") {
+        return nomeA.localeCompare(nomeB);
+      } else {
+        return nomeB.localeCompare(nomeA);
+      }
+    });
+
   return (
     <div className="w-screen h-screen bg-slate-100 dark:bg-gray-900">
       <Header
@@ -64,9 +86,9 @@ export default function Page() {
           <Link
             href="/projetos"
             className="w-[140px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] py-3 rounded-2xl bg-white shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
-                    hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
-                    active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
-                    items-center justify-center text-center"
+           hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
+           active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
+           items-center justify-center text-center"
           >
             Ver Projetos
           </Link>
@@ -75,8 +97,8 @@ export default function Page() {
           <Link
             href="/"
             className="w-[60vw] h-[40px] mt-4 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
-                    hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-                    active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
+            hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
+            active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
           >
             <HiMiniArrowRightStartOnRectangle className="w-[35px]" size={18} />
             Ver Projetos
@@ -86,9 +108,9 @@ export default function Page() {
           <Link
             href="/"
             className="w-[140px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] py-3 rounded-2xl bg-white shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
-                    hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
-                    active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
-                    items-center justify-center text-center"
+            hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
+            active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
+            items-center justify-center text-center"
           >
             Sair
           </Link>
@@ -97,8 +119,8 @@ export default function Page() {
           <Link
             href="/"
             className="w-[60vw] h-[40px] mt-4 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
-                    hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-                    active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
+            hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
+            active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
           >
             <HiMiniArrowRightStartOnRectangle className="w-[35px]" size={18} />
             Sair
@@ -109,7 +131,7 @@ export default function Page() {
       <div className="w-screen h-screen flex justify-between bg-slate-100 dark:bg-gray-900">
         <div className="flex flex-1 justify-start">
           {/* Sidebar */}
-          <div className="w-full h-full sm:w-72 bg-slate-100 dark:bg-gray-900  p-4 flex flex-col gap-6">
+          <div className="w-full h-full sm:w-72 bg-slate-100 dark:bg-gray-900 p-4 flex flex-col gap-6">
             <h2 className="text-lg font-semibold text-center">
               Gerenciar Projetos
             </h2>
@@ -134,7 +156,7 @@ export default function Page() {
             </select>
 
             {/* Novo Projeto */}
-            <ProjectForm buscarProjetos = {buscarProjetos}/>
+            <ProjectForm buscarProjetos={buscarProjetos} />
           </div>
         </div>
         <div className="w-full">
@@ -146,7 +168,7 @@ export default function Page() {
             <h1 className="text-center mt-10 text-xl font-semibold">
               Todos os projetos em andamento
             </h1>
-            <ListaProjetos projetos={projetos} />
+            <ListaProjetos projetos={projetosFiltrados} />
           </div>
           {/* -------------------------- TOAST TELA - MSG QUE APARECE APOS ALGUMA AÇÃO NA TELA ---------------------------------------------------------- */}
           <Toaster

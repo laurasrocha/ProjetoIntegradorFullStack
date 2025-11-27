@@ -23,7 +23,7 @@ export default function BtnEditar({ projetoId, className }) {
     return (
         <Button
             onClick={handleEditar}
-            // Isso daqui garante que a classe rounded e py-2 sejam aplicadas, se o Button não as tiver por padrão.
+            // Isso garante que a classe rounded e py-2 sejam aplicadas, se o Button não as tiver por padrão.
             className={`bg-blue-800 hover:opacity-70 w-1/3 text-white inline-flex justify-center items-center py-2 rounded ${className}`}
         >
             Editar Projeto
