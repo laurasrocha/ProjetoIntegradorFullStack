@@ -1,41 +1,65 @@
-// route usuários
+// api/login_user/route.js
 import { NextResponse } from "next/server";
-import { UsuariosService } from "./usuariosService";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
-
-
-export async function GET() {
-  const usuarios = await UsuariosService.getAll();
-  return NextResponse.json(usuarios);
-}
+import jwt from "jsonwebtoken";
 
 export async function POST(req) {
-
   try {
-    const dados = await req.json();
+    const { user, senha } = await req.json();
 
-    console.log("Dados recebidos do frontend:", dados);
+    // Buscar usuário
+    const usuario = await prisma.usuarios.findUnique({
+      where: { email_usuario: user },
+    });
 
-    if (!dados.senha_cripto) {
+    if (!usuario) {
       return NextResponse.json(
-        { error: "Senha é obrigatória" },
+        { error: "Usuário não encontrado" },
         { status: 400 }
       );
     }
 
-    // 🔐 Criptografar a senha ANTES de enviar para o service
-    const senhaHash = await bcrypt.hash(dados.senha_cripto, 10);
+    // Comparar senhas
+    const senhaValida = await bcrypt.compare(senha, usuario.senha_cripto);
 
-    // Substituir senha normal pela criptografada
-    dados.senha_cripto = senhaHash;
-    delete dados.senha;
+    if (!senhaValida) {
+      return NextResponse.json(
+        { error: "Senha incorreta" },
+        { status: 401 }
+      );
+    }
 
-    const resultado = await UsuariosService.create(dados);
+    // Criar token JWT
+    const token = jwt.sign(
+      {
+        id: usuario.id,
+        tipo: usuario.tipo_usuario,
+        email: usuario.email_usuario,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
+    );
 
-    return NextResponse.json(resultado, { status: 200 });
+    // Mandar cookie HttpOnly
+    const response = NextResponse.json(
+      { message: "Login realizado com sucesso!" },
+      { status: 200 }
+    );
 
+    response.cookies.set("auth_token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+    });
+
+    return response;
   } catch (error) {
-    console.error("Erro no POST /api/usuarios:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.log(error);
+    return NextResponse.json(
+      { error: "Erro interno no login." },
+      { status: 500 }
+    );
   }
 }

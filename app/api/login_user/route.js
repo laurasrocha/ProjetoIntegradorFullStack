@@ -1,3 +1,4 @@
+//api/login_user/route.js
 // Este arquivo bloqueia qualquer tentativa de login com dados falsos ou errados.
 
 import { NextResponse } from "next/server";
