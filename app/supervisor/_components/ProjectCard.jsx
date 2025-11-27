@@ -47,7 +47,7 @@ export default function ProjectCard({ project, onStatusChange }) {
         <select
           value={project.status}
           onChange={handleStatusChange}
-          className="block w-full mt-1 p-1 rounded text-black"
+          className="block w-full mt-1 p-1 rounded-xl text-black dark:text-white dark:bg-gray-600"
         >
           <option value="Pendente">Pendente</option>
           <option value="Em andamento">Em andamento</option>
