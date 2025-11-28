@@ -7,6 +7,7 @@ import Link from "next/link";
 import Header from "@/app/_components/header";
 import ThemeSwitch from "@/app/_components/themeSwitch";
 
+
 export default async function ProjetoDetalhe({ params }) {
   //pegando no FrontEnd o Parametro
   const resolvedParams = await params;

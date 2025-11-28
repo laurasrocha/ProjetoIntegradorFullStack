@@ -8,6 +8,7 @@ import BtnEditar from "@/app/docente/[id]/_components/btnEditar";
 import ProjectsGrid from "@/app/supervisor/_components/ProjectsGrid";
 import { ProjetoDetalheCard } from "./_components/card"; 
 
+
 // URL de retorno (página principal da lista de projetos)
 const URL_VOLTAR = "/docente"; 
 

@@ -18,7 +18,7 @@ export default function Home() {
                     hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none
                     active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
                      items-center justify-center text-center">
-          ENTRAR
+          LOGIN
         </Link>
       }
         // mobile sheet
@@ -26,7 +26,7 @@ export default function Home() {
           <Link href="/login"
             className="w-[60vw] h-[40px] mt-4 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out
             hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-            active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center">Entrar</Link>
+            active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center">LOGIN</Link>
         }
         //mobile (projetos)
         btnPjMobile={

@@ -8,12 +8,15 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 export default function login2() {
-  // const sucesso = () => {
-  //   toast.success("Enviamos no seu email");
-  // };
+
   const [email, setEmail] = useState("");
 
   const handleForgot = async () => {
+    if (!email) {
+      toast.error("Digite um e-mail válido!");
+      return;
+    }
+
     const response = await fetch("/api/password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -21,8 +24,15 @@ export default function login2() {
     });
 
     const data = await response.json();
-    alert(data.message);
+
+    if (response.ok) {
+      toast.success(data.message || "Email enviado com sucesso!");
+      setEmail(""); // limpa o input
+    } else {
+      toast.error(data.error || "Erro ao enviar email.");
+    }
   };
+
 
 
   return (
@@ -86,7 +96,7 @@ export default function login2() {
               </h2>
               <Input
                 type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                className="border-2 border-[#004A8D] w-[90vw] h-[35px] sm:w-[350px] sm:h-[43px] text-xs sm:text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"/>
+                className="border-2 border-[#004A8D] w-[90vw] h-[35px] sm:w-[350px] sm:h-[43px] text-xs sm:text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300" />
             </div>
 
             <div className="flex w-full justify-center">

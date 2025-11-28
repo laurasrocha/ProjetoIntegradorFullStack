@@ -116,9 +116,10 @@ export default function ProjectForm({ onProjectAdded }) {
           value={observacoes} onChange={(e) => setObservacoes(e.target.value)} />
       </div>
 
-      {}
+      { }
       <div className="mb-3">
         <label className="block font-medium">Status</label>
+        // Apenas garantindo que os nomes estão padronizados:
         <select className="border p-2 w-full rounded" value={status_projeto}
           onChange={(e) => setStatusProjeto(e.target.value)}>
           <option value="Pendente">Pendente</option>
@@ -126,6 +127,7 @@ export default function ProjectForm({ onProjectAdded }) {
           <option value="Recusado">Recusado</option>
           <option value="Concluído">Concluído</option>
         </select>
+
       </div>
 
       <button type="submit"

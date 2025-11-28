@@ -1,6 +1,9 @@
-
 import { NextResponse } from "next/server";
 import { ProjetoService } from "../projetosService";
+import { writeFile, mkdir, unlink } from "fs/promises";
+import path from "path";
+export const runtime = "nodejs";
+
 
 export async function GET(requests, context) {
   try {

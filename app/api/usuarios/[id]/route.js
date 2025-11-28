@@ -1,12 +1,11 @@
-//route [id] usuários
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma"; // ou import do seu prisma
 import { UsuariosService } from "../usuariosService";
 
-export async function GET(requests, context) {
+// GET /api/usuarios/:id
+export async function GET(req, context) {
   try {
-
-    // params agora é assíncrono!
-    const { id } = await context.params;
+    const { id } = context.params; // ✅ sem await
     const usuariosId = Number(id);
     if (isNaN(usuariosId)) {
       return NextResponse.json({ error: "ID inválido" }, { status: 400 });
@@ -20,21 +19,20 @@ export async function GET(requests, context) {
 
     return NextResponse.json(usuario);
   } catch (erro) {
-    console.log("Erro ao buscar projeto:", erro);
+    console.log("Erro ao buscar usuário:", erro);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
-// PUT /api/usuarios/:id - atualizar projeto
-export async function PUT(req, { params }) {
+
+// PUT /api/usuarios/:id
+export async function PUT(req, context) {
   try {
-    //aguarda o params
-    // ✅ Pega params do contexto
-    const id = params.id;
+    const { id } = context.params; // ✅ sem await
     const usuariosId = Number(id);
     const dados = await req.json(); // dados para atualizar
 
     const usuarioAtualizado = await prisma.usuarios.update({
-      where: usuariosId,
+      where: { id: usuariosId }, // ✅ precisa ser objeto
       data: dados,
     });
 
@@ -45,15 +43,14 @@ export async function PUT(req, { params }) {
   }
 }
 
-// DELETE /api/usuarios/:id - deletar projeto
-export async function DELETE(req, { params }) {
+// DELETE /api/usuarios/:id
+export async function DELETE(req, context) {
   try {
-    // ✅ Pega params do contexto
-    const id = params.id;
+    const { id } = context.params; // ✅ sem await
     const usuariosId = Number(id);
 
     await prisma.usuarios.delete({
-      where: { id: usuariosId },
+      where: { id: usuariosId }, // ✅ precisa ser objeto
     });
 
     return NextResponse.json({ message: "Usuário deletado com sucesso!" }, { status: 200 });

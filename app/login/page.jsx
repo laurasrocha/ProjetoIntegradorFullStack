@@ -21,32 +21,7 @@ export default function Login() {
     toast.success(checked ? "Olá, Supervisor(a)" : "Olá, Docente");
   };
 
-  // const handleLogin = async () => {
-  //   const res = await fetch("/api/login_user", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ user, senha }),
-  //   });
-
-  //   const data = await res.json();
-
-  //   if (!res.ok) {
-  //     toast.error(data.error);
-  //     return;
-  //   }
-
-  //   toast.success("Login realizado!");
-
-  //   // PEGAR O TIPO DO USUÁRIO
-  //   const tipo = data.usuario.tipo_usuario;
-
-  //   // REDIRECIONAR
-  //   if (tipo === "SUPERVISOR") {
-  //     router.push("/supervisor");
-  //   } else {
-  //     router.push("/docente");
-  //   }
-  // };
+ 
   const handleLogin = async () => {
     console.log("SENDING:", { user, senha });
 

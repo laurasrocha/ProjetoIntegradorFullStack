@@ -3,19 +3,21 @@ import ListaProjetos from "./_components/listaprojetos";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
-import Image from "next/image";
-import formatarComCasas from "@/lib/casasdecimais";
+// import Image from "next/image";
+// import formatarComCasas from "@/lib/casasdecimais";
 // Componentes reutilizáveis
 
 import Header from "../_components/header";
 import ThemeSwitch from "../_components/themeSwitch";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+// import {
+//   Card,
+//   CardHeader,
+//   CardTitle,
+//   CardDescription,
+// } from "@/components/ui/card";
+
+
 //Pegando a variaverl URL_DOMINIO
 const URL_DOMINIO = process.env.NEXT_PUBLIC_URL_DOMINIO;
 
@@ -62,7 +64,7 @@ export default function Projetos() {
             href="/login"
             className="w-[140px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] py-3 rounded-2xl bg-white shadow-md text-xs font-semibold uppercase hover:tracking-wide hover:bg-[#f29100] hover:text-white"
           >
-            Entrar
+            LOGIN
           </Link>
         }
         btnMobile={
@@ -70,7 +72,7 @@ export default function Projetos() {
             href="/login"
             className="w-[60vw] h-[40px] mt-4 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase hover:tracking-wide hover:bg-[#f29100] hover:text-white flex items-center justify-center"
           >
-            Entrar
+            LOGIN
           </Link>
         }
         btnPjDesktop={
@@ -78,7 +80,7 @@ export default function Projetos() {
             href="/"
             className="w-[160px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] font-semibold py-3 rounded-2xl bg-white shadow-md text-xs tracking-wider uppercase hover:tracking-wide hover:bg-[#f29100] hover:text-white"
           >
-            Início
+            Tela Inicial
           </Link>
         }
         btnPjMobile={
@@ -86,7 +88,7 @@ export default function Projetos() {
             href="/"
             className="w-[60vw] h-[40px] mt-8 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase hover:tracking-wide hover:bg-[#f29100] hover:text-white flex items-center justify-center"
           >
-            Início
+            Tela Inicial
           </Link>
         }
       />

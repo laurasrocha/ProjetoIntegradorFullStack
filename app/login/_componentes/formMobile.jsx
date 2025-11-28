@@ -16,7 +16,7 @@ import Image from "next/image";
 
 export default function FormMobile() {
 
- 
+
     const [nome_usuario, setNome] = useState("");
     const [email_usuario, setEmail] = useState("");
     const [senha_cripto, setSenha] = useState("");
@@ -100,7 +100,7 @@ export default function FormMobile() {
 
                     />
 
-                    <Select value={TipoUsuario} onValueChange={setTipoUser}>
+                    <Select value={tipo_usuario} onValueChange={setTipoUser}>
                         <SelectTrigger className="w-[90vw] h-[35px] border-2 border-[#004A8D] text-sm font-semibold rounded-xl">
                             <SelectValue
                                 placeholder="Tipo de Usuário"

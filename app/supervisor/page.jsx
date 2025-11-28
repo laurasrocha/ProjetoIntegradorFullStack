@@ -3,11 +3,11 @@ import Image from "next/image";
 import Header from "../_components/header";
 import Link from "next/link";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
-import ProjectsGrid from "./_components/ProjectsGrid";
+// import ProjectsGrid from "./_components/ProjectsGrid";
 import ProjectForm from "./_components/ProjectForm";
+import ProjectModal from "./_components/ProjectModal"; // <-- novo modal externo
 import { useState, useEffect } from "react";
 import ThemeSwitch from "../_components/themeSwitch";
-import { ToastProvider } from "../_components/ToastProvider";
 import { toast } from "sonner";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ export default function SupervisorPage() {
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [feedback, setFeedback] = useState("");
+  // const [feedback, setFeedback] = useState("");  // removi: agora feedback fica no modal
   const [projects, setProjects] = useState([]);
   const [status, setStatus] = useState("");
 
@@ -56,19 +56,15 @@ export default function SupervisorPage() {
       (project.membros_projeto || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
+
+    // Normaliza ambos (filtro e dado do projeto) para evitar problemas de case
+    const projectStatus = (project.status_projeto || project.status || "").toString();
     const matchesStatus =
-      statusFilter === "" || project.status === statusFilter;
+      statusFilter === "" ||
+      projectStatus.toLowerCase() === statusFilter.toLowerCase();
+
     return matchesSearch && matchesStatus;
   });
-
-  const enviarFeedback = () => {
-    if (feedback.trim() === "") {
-      toast.warning("Digite um feedback antes de enviar.");
-      return;
-    }
-    toast.success(`Feedback enviado: ${feedback}`);
-    setFeedback("");
-  };
 
   // ============================
   //       FUNÇÃO DE PATCH
@@ -90,7 +86,7 @@ export default function SupervisorPage() {
       // Atualiza estado local para manter o valor apos reload
       setProjects((prev) =>
         prev.map((p) =>
-          p.id === id ? { ...p, status_projeto: status } : p
+          p.id === id ? { ...p, status_projeto: status, status } : p
         )
       );
 
@@ -106,18 +102,16 @@ export default function SupervisorPage() {
   //   COMPONENTE PROJECT CARD
   // ============================
   function ProjectCard({ project, setSelectedProject, atualizarStatus }) {
-    
-
     async function handleChange(e) {
       const newStatus = e.target.value;
-      setStatus(newStatus); //atualiza visualmente
+      setStatus(newStatus); //atualiza visualmente local
       await atualizarStatus(project.id, newStatus); //atualiza backend e estado global
     }
 
     return (
       <div className="w-[250px] p-4 bg-white dark:bg-gray-800 shadow-md rounded-lg flex flex-col">
         <select
-          value={project.status_projeto || ""} // usa sempre o valor atualizado do estado global
+          value={project.status_projeto || project.status || ""} // usa sempre o valor atualizado do estado global
           onChange={handleChange}
           className={`
             w-[105px] h-[35px] border-2 border-[#004A8D] px-1 py-1 ml-auto rounded-xl
@@ -134,15 +128,15 @@ export default function SupervisorPage() {
         </select>
 
         <h3 className="text-lg w-28 font-semibold text-[#004A8D] dark:text-white">
-          {project.nome_projeto}
+          {project.nome_projeto || project.nome}
         </h3>
 
         <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-          Desenvolvido por: {project.membros_projeto}
+          Desenvolvido por: {project.membros_projeto || project.membros || project.membros_projeto}
         </p>
 
         <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
-          Turma: {project.turma_projeto}
+          Turma: {project.turma_projeto || project.turma_projeto}
         </span>
 
         <button
@@ -151,88 +145,6 @@ export default function SupervisorPage() {
         >
           Ver Mais
         </button>
-      </div>
-    );
-  }
-
-  // ============================
-  //        MODAL (SEU)
-  // ============================
-  function ProjectModal({ project, onClose }) {
-    if (!project) return null;
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
-        <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-
-          <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-[#004A8D] dark:text-white">
-              {project.nome_projeto}
-            </h3>
-            <button
-              onClick={onClose}
-              aria-label="Fechar"
-              className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <X />
-            </button>
-          </div>
-
-          <div className="p-6 space-y-4 text-gray-700 dark:text-gray-300">
-            <div>
-              <strong>Desenvolvido por:</strong>
-              <div>{project.membros_projeto || "Não informado"}</div>
-            </div>
-
-            <div>
-              <strong>Turma:</strong>
-              <div>{project.turma_projeto || "Não informado"}</div>
-            </div>
-
-            <div>
-              <strong>Status:</strong>
-              <div>{project.status_projeto || "Não informado"}</div>
-            </div>
-
-            <div>
-              <strong>Descrição:</strong>
-              <div>{project.descricao || "Sem descrição cadastrada."}</div>
-            </div>
-
-            {project.imagem && (
-              <div>
-                <img
-                  src={project.imagem}
-                  alt={project.nome_projeto}
-                  className="w-full h-auto rounded"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* botões dentro do ver mais */}
-          <div className="flex items-center gap-3 justify-end p-4 border-t dark:border-gray-700">
-            <button
-              onClick={onClose}
-              className="w-[160px] h-[40px] hidden sm:block cursor-pointer text-white font-semibold py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs tracking-wider uppercase transition-all duration-500 ease-in-out
-           hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
-          active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100"
-            >
-              Fechar
-            </button>
-
-            <button
-              onClick={() => {
-                toast.success("Projeto aprovado!");
-                onClose();
-              }}
-              className="w-[160px] h-[40px] hidden sm:block cursor-pointer text-white dark:text-[#004A8D] font-semibold py-3 rounded-2xl bg-gray-800 dark:bg-white shadow-md text-xs tracking-wider uppercase transition-all duration-500 ease-in-out
-           hover:tracking-wide hover:bg-[#f29100] hover:text-white hover:shadow-slate-400 focus:outline-none
-          active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100"
-            >
-              Feedback
-            </button>
-          </div>
-        </div>
       </div>
     );
   }
@@ -286,15 +198,16 @@ export default function SupervisorPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
 
+              {/* NOTE: opções com inicial maiúscula para combinar com o banco */}
               <select
                 className="w-[300px] h-[35px] border-2 border-[#004A8D] text-black dark:text-white dark:bg-gray-900 px-2 py-1 rounded"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
                 <option value="">Todos os Status</option>
-                <option value="aprovado">Aprovado</option>
-                <option value="recusado">Recusado</option>
-                <option value="pendente">Pendente</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Aprovado">Aprovado</option>
+                <option value="Recusado">Recusado</option>
               </select>
             </div>
           </div>
@@ -320,31 +233,10 @@ export default function SupervisorPage() {
           )}
         </div>
 
-        <div className="w-full flex items-center justify-center">
-          <div className="w-[90%] max-w-md mt-8 border-t border-gray-300 pt-6 space-y-4">
-            <h2 className="text-lg font-semibold text-black dark:text-white text-center">
-              Ações do Supervisor
-            </h2>
-
-            <div className="mt-4">
-              <textarea
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Digite um feedback para o projeto..."
-                className="w-full border-2 text-black dark:text-white border-[#004A8D] rounded p-2"
-                rows={3}
-              />
-              <button
-                onClick={enviarFeedback}
-                className={`mt-8 sm:mt-2 w-[200px] h-[35px] sm:w-[450px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all duration-500 ease-in-out`}
-              >
-                Enviar Feedback
-              </button>
-            </div>
-          </div>
-        </div>
+        {/* removi o "Ações do Supervisor" (feedback global) porque agora o feedback é dado por projeto dentro do modal */}
       </div>
 
+      {/* Novo modal externo (coloque ProjectModal.jsx em _components) */}
       {selectedProject && (
         <ProjectModal
           project={selectedProject}
