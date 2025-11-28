@@ -1,39 +1,30 @@
+
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { writeFile, mkdir, unlink } from "fs/promises";
-import path from "path";
+import { ProjetoService } from "../projetosService";
 
-// GET: Buscar projeto pelo ID
-export async function GET(req, { params }) {
+export async function GET(requests, context) {
   try {
-    const { id } = await params;
-    const projetoId = parseInt(id);
 
+    // params agora é assíncrono!
+    const { id } = await context.params;
+    const projetoId = Number(id);
     if (isNaN(projetoId)) {
       return NextResponse.json({ error: "ID inválido" }, { status: 400 });
     }
 
-    const projeto = await prisma.projetos.findUnique({
-      where: { id: projetoId },
-    });
+    const projeto = await ProjetoService.getByID(projetoId);
 
     if (!projeto) {
-      return NextResponse.json(
-        { error: "Projeto não encontrado" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Projeto não encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json(projeto, { status: 200 });
-  } catch (error) {
-    console.error("Erro no GET:", error);
-    return NextResponse.json(
-      { error: "Erro interno ao buscar projeto" },
-      { status: 500 }
-    );
+    return NextResponse.json(projeto);
+  } catch (erro) {
+    console.log("Erro ao buscar projeto:", erro);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
-
+// PUT /api/projetos/:id - atualizar projeto
 // PUT: Atualizar projeto (Com lógica de manter/excluir fotos)
 export async function PUT(req, { params }) {
   try {
@@ -136,38 +127,50 @@ export async function PUT(req, { params }) {
   }
 }
 
-// DELETE: Deletar projeto
+/// PATCH - atualização parcial (ideal para status)
+export async function PATCH(req, context) {
+  try {
+    const { id } = await context.params;
+    const projetoId = Number(id);
+    const dados = await req.json();
+
+     
+    // Ajuste para o campo correto do banco
+    if (dados.status !== undefined) {
+      dados.status_projeto = dados.status;
+      delete dados.status;
+    }
+
+    if (!dados || Object.keys(dados).length === 0) {
+      return NextResponse.json({ error: "Nenhum dado enviado" }, { status: 400 });
+    }
+
+    const atualizado = await prisma.projetos.update({
+      where: { id: projetoId },
+      data: dados,
+    });
+
+    return NextResponse.json(atualizado);
+  } catch (error) {
+    console.error("Erro no PATCH /projetos/:id:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// DELETE /api/projetos/:id - deletar projeto
 export async function DELETE(req, { params }) {
   try {
-    const { id } = await params;
-    const projetoId = parseInt(id);
-
-    // Apagar fotos físicas antes de deletar registro
-    const projeto = await prisma.projetos.findUnique({
-      where: { id: projetoId },
-    });
-    if (projeto?.fotos) {
-      const listaFotos = projeto.fotos.split(",");
-      for (const foto of listaFotos) {
-        try {
-          await unlink(path.join(process.cwd(), "public", foto));
-        } catch (e) {}
-      }
-    }
+    // ✅ Pega params do contexto
+    const id = params.id;
+    const projetoId = Number(id);
 
     await prisma.projetos.delete({
       where: { id: projetoId },
     });
 
-    return NextResponse.json(
-      { message: "Deletado com sucesso" },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "Projeto deletado com sucesso!" }, { status: 200 });
   } catch (error) {
-    console.error("Erro no DELETE:", error);
-    return NextResponse.json(
-      { error: "Erro interno ao deletar" },
-      { status: 500 }
-    );
+    console.log("Erro no DELETE /api/projetos/:id:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
