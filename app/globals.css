@@ -6,8 +6,13 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* fontes next/google */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-poppins: var(--font-poppins), sans-serif;
+  --font-merri: var(--font-merri);
+  --font-roboto: var(--font-roboto), sans-serif;
+  --font-roboto-condensed: var(--font-roboto-condensed), sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
