@@ -43,8 +43,6 @@ export const UsuariosService = {
 
       // Fallback para qualquer outro erro inesperado
       return `Erro inesperado getALL ${error} `;
-    } finally {
-      await prisma.$disconnect();
     }
   },
 
@@ -136,7 +134,7 @@ export const UsuariosService = {
 
       console.log("Projeto criado:", novoUsuario);
       return novoUsuario;
-      
+
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.error(`⚠️ Erro Prisma (create): ${error.code}`);
@@ -150,8 +148,6 @@ export const UsuariosService = {
         }
       }
       return `Erro inesperado em create: ${error.message}`;
-    } finally {
-      //await prisma.$disconnect();
     }
   },
 };

@@ -1,65 +1,45 @@
-// api/login_user/route.js
+// app/api/usuarios/route.js
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { UsuariosService } from "./usuariosService";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+
+export async function GET() {
+  try {
+    const usuarios = await UsuariosService.getAll();
+    return NextResponse.json(usuarios);
+  } catch (error) {
+    console.error("Erro no GET /api/usuarios:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
 
 export async function POST(req) {
   try {
-    const { user, senha } = await req.json();
+    const dados = await req.json();
 
-    // Buscar usuário
-    const usuario = await prisma.usuarios.findUnique({
-      where: { email_usuario: user },
-    });
+    console.log("REQ JSON:", dados);
 
-    if (!usuario) {
+    if (!dados.senha_cripto) {
       return NextResponse.json(
-        { error: "Usuário não encontrado" },
+        { error: "Senha é obrigatória" },
         { status: 400 }
       );
     }
 
-    // Comparar senhas
-    const senhaValida = await bcrypt.compare(senha, usuario.senha_cripto);
+    const senhaHash = await bcrypt.hash(dados.senha_cripto, 10);
 
-    if (!senhaValida) {
-      return NextResponse.json(
-        { error: "Senha incorreta" },
-        { status: 401 }
-      );
-    }
-
-    // Criar token JWT
-    const token = jwt.sign(
-      {
-        id: usuario.id,
-        tipo: usuario.tipo_usuario,
-        email: usuario.email_usuario,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "2h" }
-    );
-
-    // Mandar cookie HttpOnly
-    const response = NextResponse.json(
-      { message: "Login realizado com sucesso!" },
-      { status: 200 }
-    );
-
-    response.cookies.set("auth_token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      path: "/",
+    const resultado = await UsuariosService.create({
+      nome_usuario: dados.nome_usuario,
+      email_usuario: dados.email_usuario,
+      senha_cripto: senhaHash,
+      tipo_usuario: dados.tipo_usuario
     });
 
-    return response;
+    return NextResponse.json(resultado, { status: 200 });
+
   } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: "Erro interno no login." },
-      { status: 500 }
-    );
+    console.error("Erro no POST /api/usuarios:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

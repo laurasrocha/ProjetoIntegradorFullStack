@@ -1,46 +1,51 @@
-//api/login_user/route.js
-// Este arquivo bloqueia qualquer tentativa de login com dados falsos ou errados.
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export async function POST(req) {
   try {
     const { user, senha } = await req.json();
 
-    // 1. Verificar se o user existe
+    if (!user || !senha) {
+      return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+    }
+
     const usuario = await prisma.usuarios.findUnique({
       where: { email_usuario: user },
     });
 
     if (!usuario) {
-      return NextResponse.json(
-        { error: "Usuário não encontrado." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Usuário não encontrado" }, { status: 400 });
     }
 
-    // 2. Comparar senha
     const senhaValida = await bcrypt.compare(senha, usuario.senha_cripto);
-
     if (!senhaValida) {
-      return NextResponse.json(
-        { error: "Senha incorreta." },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Senha incorreta" }, { status: 401 });
     }
 
-    // 3. Login válido — você pode gerar sessão, cookie ou só retornar ok
-    return NextResponse.json(
-      { message: "Login realizado com sucesso!", usuario },
-      { status: 200 }
+    // Gerar JWT
+    const token = jwt.sign(
+      { id: usuario.id, tipo: usuario.tipo_usuario },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
     );
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: "Erro interno no login." },
-      { status: 500 }
-    );
+
+    // Retornar resposta com cookie
+    const response = NextResponse.json({ message: "Login realizado!", usuario });
+    response.cookies.set({
+      name: "auth_token",
+      value: token,
+      httpOnly: true,
+      path: "/",
+      maxAge: 2 * 60 * 60, // 2 horas
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return response;
+  } catch (err) {
+    console.error("ERRO LOGIN:", err);
+    return NextResponse.json({ error: "Erro interno no login" }, { status: 500 });
   }
 }
