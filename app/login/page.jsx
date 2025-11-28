@@ -21,7 +21,35 @@ export default function Login() {
     toast.success(checked ? "Olá, Supervisor(a)" : "Olá, Docente");
   };
 
+  // const handleLogin = async () => {
+  //   const res = await fetch("/api/login_user", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({ user, senha }),
+  //   });
+
+  //   const data = await res.json();
+
+  //   if (!res.ok) {
+  //     toast.error(data.error);
+  //     return;
+  //   }
+
+  //   toast.success("Login realizado!");
+
+  //   // PEGAR O TIPO DO USUÁRIO
+  //   const tipo = data.usuario.tipo_usuario;
+
+  //   // REDIRECIONAR
+  //   if (tipo === "SUPERVISOR") {
+  //     router.push("/supervisor");
+  //   } else {
+  //     router.push("/docente");
+  //   }
+  // };
   const handleLogin = async () => {
+    console.log("SENDING:", { user, senha });
+
     const res = await fetch("/api/login_user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -30,6 +58,8 @@ export default function Login() {
 
     const data = await res.json();
 
+    console.log("RESPOSTA COMPLETA:", data);
+
     if (!res.ok) {
       toast.error(data.error);
       return;
@@ -37,20 +67,20 @@ export default function Login() {
 
     toast.success("Login realizado!");
 
-    // Aqui o backend já criou o cookie,
-    // então só redirecionar:
+    if (!data.usuario) {
+      console.error("❌ data.usuario está undefined!");
+      return;
+    }
 
-    // BUSCAR TIPO DO USUÁRIO
-    const response = await fetch("/api/me");
-    const userData = await response.json();
+    const tipo = data.usuario.tipo_usuario;
+    console.log("TIPO:", tipo);
 
-    if (userData.tipo === "SUPERVISOR") {
+    if (tipo === "SUPERVISOR") {
       router.push("/supervisor");
     } else {
       router.push("/docente");
     }
   };
-
 
 
   return (

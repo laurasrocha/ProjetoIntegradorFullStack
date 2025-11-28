@@ -16,11 +16,12 @@ import Image from "next/image";
 
 export default function FormMobile() {
 
+ 
     const [nome_usuario, setNome] = useState("");
     const [email_usuario, setEmail] = useState("");
     const [senha_cripto, setSenha] = useState("");
     const [confSenha, setConfSenha] = useState("");
-    const [TipoUsuario, setTipoUser] = useState("");
+    const [tipo_usuario, setTipoUser] = useState("");
 
     // Limpar campos
     function resetForm() {
@@ -38,7 +39,7 @@ export default function FormMobile() {
             !email_usuario ||
             !senha_cripto ||
             !confSenha ||
-            !TipoUsuario
+            !tipo_usuario
         ) {
             alert("Preencha todos os campos!");
             return;
@@ -54,7 +55,7 @@ export default function FormMobile() {
                 nome_usuario,
                 email_usuario,
                 senha_cripto,
-                TipoUsuario,
+                tipo_usuario,
             };
 
             console.log("Enviando dados:", dados);
