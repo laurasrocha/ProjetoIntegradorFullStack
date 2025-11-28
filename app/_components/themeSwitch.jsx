@@ -9,24 +9,22 @@ export default function ThemeSwitch() {
   if (darkMode === null) return null;
 
   return (
-    <div className="hidden sm:block">
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        className="relative flex items-center justify-between w-12 h-6 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors duration-300 px-1 m-2"
-      >
-        {/* Sol */}
-        <MdSunny size={9} className="text-[#f29100]" />
+    <button
+      onClick={() => setDarkMode(!darkMode)}
+      className="relative flex items-center justify-between w-15 h-8 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors duration-300 p-2 m-4"
+    >
+      {/* Ícone do Sol */}
+      <MdSunny size={14} className="text-white" />
 
-        {/* Lua */}
-        <IoIosMoon size={9} className="text-[#004A8D]" />
+      {/* Ícone da Lua */}
+      <IoIosMoon size={14} className="text-black" />
 
-        {/* Bolinha */}
-        <span
-          className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white/60 dark:bg-gray-200/40 backdrop-blur-sm rounded-full shadow transition-transform duration-300 ${darkMode ? "translate-x-6" : "translate-x-0"
-            }`}
-        />
-      </button>
-
-    </div>
+      {/* Bolinha deslizante com transparência */}
+      <span
+        className={`absolute top-1 w-5 h-5 bg-white/50 dark:bg-gray-200/40 backdrop-blur-sm rounded-full shadow-md transition-transform duration-300 ${
+          darkMode ? "translate-x-6" : "translate-x-0"
+        }`}
+      />
+    </button> 
   );
 }

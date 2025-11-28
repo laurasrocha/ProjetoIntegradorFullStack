@@ -25,10 +25,11 @@ export default function CarouselFunction() {
 
 
     const cards = [
+        { image: "/geminiBanner3.png" },
         { image: "/carousel1.jpg" },
-        { image: "/carousel2.png" },
+        { image: "/geminiBanner3.png" },
         { image: "/carousel1.jpg" },
-        { image: "/carousel2.png" },
+        
     ]
  
     return (
@@ -47,6 +48,8 @@ export default function CarouselFunction() {
                                             src={card.image}
                                             alt={`Slide ${index + 1}`}
                                             fill
+                                            quality={100}
+                                            priority={index === 0} // primeira imagem carrega em alta primeiro
                                             className='object-cover rounded-xl'
                                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 600px"
 

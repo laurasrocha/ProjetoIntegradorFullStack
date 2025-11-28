@@ -12,13 +12,13 @@ import { FaLocationDot } from "react-icons/fa6";
 import Image from "next/image";
 import { IoLogoFacebook } from "react-icons/io5";
 import { FaTwitter, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
+
 
 export default function Footer() {
   return (
     <div className="w-screen flex flex-col bg-slate-100 dark:bg-gray-900">
       <div className="bg-slate-200 h-18 flex justify-center items-center dark:bg-gray-700 relative bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-700 p-2">
-        <label className="font-serif text-sm sm:text-xl text-center text-gray-700 dark:text-white">
+        <label className="font-roboto-condensed text-sm sm:text-xl text-center text-gray-700 dark:text-white">
           Central de Relacionamento: 0800 724 44 40 (Minas Gerais)
           <br />
           31 3057-86600 (Demais Estados)
@@ -26,14 +26,14 @@ export default function Footer() {
       </div>
       <div className="bg-[#f29100] h-[3px] w-full"></div>
 
-      <div className="bg-[#004A8D] h-auto w-full justify-around hidden sm:flex dark:bg-gray-900">
-        <div className="flex flex-col items-center gap-3 p-2">
+      <div className="bg-[#004A8D] h-[30vh] w-full justify-evenly items-center hidden sm:flex dark:bg-gray-900">
+        <div className="h-[200px] w-[200px] flex flex-col items-center gap-3 mt-10">
           <a
             href="https://www.mg.senac.br/Paginas/default.aspx"
             target="_blank" /*abre o link em outra aba */
             rel="noopener noreferrer" /*pratica de segurança */
             className="relative text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-[#f29100] after:transition-all after:duration-300 hover:after:w-full
-                    font-bold font-serif text-xl"
+                    font-bold font-roboto text-xl"
           >
             Senac MG
           </a>
@@ -117,13 +117,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-center gap-3 p-2">
+        <div className=" h-[200px] w-[200px]  flex flex-col justify-center items-center gap-3">
           <a
             href="https://www.mg.senac.br/Paginas/default.aspx"
             target="_blank" /*abre o link em outra aba */
             rel="noopener noreferrer" /*pratica de segurança */
             className="relative text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-[#f29100] after:transition-all after:duration-300 hover:after:w-full
-                    font-bold font-serif  text-xl"
+                    font-bold font-roboto  text-xl"
           >
             Para Você
           </a>
@@ -223,13 +223,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-center gap-3 p-2">
+        <div className=" h-[200px] w-[200px] flex flex-col justify-center items-center gap-3">
           <a
             href="https://www.mg.senac.br/Paginas/default.aspx"
             target="_blank" /*abre o link em outra aba */
             rel="noopener noreferrer" /*pratica de segurança */
             className="relative text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-[#f29100] after:transition-all after:duration-300 hover:after:w-full
-                        font-bold font-serif text-xl"
+                        font-bold font-roboto text-xl"
           >
             Para Empresas
           </a>
@@ -276,12 +276,12 @@ export default function Footer() {
 
       <div className="bg-[#05589d] w-full h-20 flex flex-col sm:flex-row justify-center items-center gap-y-2 sm:gap-x-2 relative bg-gradient-to-r dark:bg-gray-700 dark:from-gray-800 dark:via-gray-700 dark:to-gray-700">
         <FaLocationDot size={25} color="white"  className=""/>
-        <a className="text-white text-center font-serif text-xs sm:text-xl">
+        <a className="text-white text-center font-roboto-condensed text-xs sm:text-xl">
           Senac MG - Rua dos Tupinambás, 1.086 - Belo Horizonte / MG
         </a>
       </div>
 
-      <div className="bg-[#004A8D] w-full h-48 flex flex-col justify-around items-center dark:bg-gray-900">
+      <div className="bg-[#004A8D] w-full h-48 flex flex-col justify-center items-center gap-5 dark:bg-gray-900">
         <div className="flex justify-start items-center">
           <Image
             src="/logosenacbranco.png"
@@ -291,11 +291,11 @@ export default function Footer() {
           />
         </div>
 
-        <a className="text-white font-serif text-center">
+        <a className="text-white font-roboto-condensed text-center">
           Senac MG © Todos os Direitos Reservados
         </a>
 
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center gap-3">
           <a
             href="https://www.facebook.com/senacminas/"
             target="_blank"

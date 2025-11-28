@@ -16,11 +16,11 @@ export default function Texto() {
         >
           <div className="flex items-center gap-3 mb-4">
             <HiOutlineLightBulb className="text-[#f29100] w-8 h-8 animate-bounce" />
-            <h2 className="font-extrabold text-2xl sm:text-3xl text-gray-900 dark:text-white">
+            <h2 className="font-extrabold font-poppins text-2xl sm:text-3xl text-gray-900 dark:text-white">
               O que é Projeto Integrador do Senac?
             </h2>
           </div>
-          <p className="text-gray-700 dark:text-gray-200 sm:text-lg leading-relaxed italic">
+          <p className="text-gray-700 dark:text-gray-200 sm:text-lg leading-relaxed font-roboto">
             O Projeto Integrador é uma atividade prática desenvolvida ao longo
             do curso técnico do SENAC (Serviço Nacional de Aprendizagem
             Comercial). Ele tem como objetivo unir teoria e prática, permitindo
@@ -41,11 +41,11 @@ export default function Texto() {
         >
           <div className="flex items-center gap-3 mb-4">
             <HiOutlineClipboardList className="text-[#f29100] w-8 h-8 animate-pulse" />
-            <h2 className="font-extrabold text-2xl sm:text-3xl text-gray-900 dark:text-white">
+            <h2 className="font-extrabold font-poppins text-2xl sm:text-3xl text-gray-900 dark:text-white">
               Para que serve?
             </h2>
           </div>
-          <ul className="text-gray-700 dark:text-gray-200 sm:text-lg leading-relaxed list-disc list-inside space-y-2 italic">
+          <ul className="text-gray-700 dark:text-gray-200 sm:text-lg leading-relaxed list-disc list-inside space-y-2 font-roboto italic">
             <li>
               Aplicar na prática o conteúdo aprendido durante o curso (técnico ou profissionalizante);
             </li>

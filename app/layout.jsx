@@ -1,27 +1,52 @@
 import "./globals.css";
 import { ToastProvider } from "./_components/ToastProvider";
-import { Providers } from "./providers"; // Importe o arquivo criado
+import { cookies } from "next/headers";
+import { Poppins, Merriweather, Roboto, Roboto_Condensed  } from "next/font/google";
 
-export const metadata = {
-  title: "Meu App PWA",
-  description: "Aplicativo PWA com Next.js App Router",
-  manifest: "/manifest.json",
-  icons: {
-    icon: "/senac-192x192.png",
-    apple: "/senac-512x512.png",
-  },
-};
+//usando fontes do next/font/google
+//estão sendo chamadas no @theme:inline do global.css
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
+  variable: "--font-poppins"
+});
 
-export default function ProjetosLayout({ children }) {
+const merriweather = Merriweather({
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  variable: "--font-merri"
+});
+
+// Fonte principal — Roboto
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-roboto",
+});
+
+// Fonte secundária — Roboto Condensed
+const robotoCondensed = Roboto_Condensed({
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  variable: "--font-roboto-condensed",
+});
+
+export default async function ProjetosLayout({ children }) {
+  // Só dentro do componente podemos chamar cookies()
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value || "dark";
+
   return (
-    // ADICIONE suppressHydrationWarning (Essencial para evitar erro no console)
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" className={`${theme === "dark" ? "dark" : ""} 
+      ${poppins.variable} 
+      ${merriweather.variable} 
+      ${roboto.variable}
+      ${robotoCondensed.variable}`}>
+
       <body className="w-screen h-screen overflow-x-hidden bg-slate-100 dark:bg-gray-900">
-        {/* Envolva o conteúdo com o Providers */}
-        <Providers>
-            {children}
-            <ToastProvider />
-        </Providers>
+        {children}
+        {/* Toaster global */}
+        <ToastProvider />
       </body>
     </html>
   );
