@@ -1,31 +1,30 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
-export function middleware(req) {
+export async function middleware(req) {
   const token = req.cookies.get("auth_token")?.value;
 
-  // Se não estiver logado → redireciona para login
   if (!token) return NextResponse.redirect(new URL("/login", req.url));
 
   try {
-    const user = jwt.verify(token, process.env.JWT_SECRET);
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret);
 
     const pathname = req.nextUrl.pathname;
 
-    // Bloqueio por tipo
-    if (pathname.startsWith("/docente") && user.tipo !== "DOCENTE") {
+    if (pathname.startsWith("/docente") && payload.tipo !== "DOCENTE") {
       return NextResponse.redirect(new URL("/acesso-negado", req.url));
     }
 
-    if (pathname.startsWith("/supervisor") && user.tipo !== "SUPERVISOR") {
+    if (pathname.startsWith("/supervisor") && payload.tipo !== "SUPERVISOR") {
       return NextResponse.redirect(new URL("/acesso-negado", req.url));
     }
 
+    return NextResponse.next();
   } catch (err) {
+    console.error("Middleware JWT inválido:", err);
     return NextResponse.redirect(new URL("/login", req.url));
   }
-
-  return NextResponse.next();
 }
 
 export const config = {
