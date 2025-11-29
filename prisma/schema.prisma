@@ -37,12 +37,12 @@ model projetos {
   data_apresentacao  String
   convidados         Boolean
   detalhesConvidados String?
-  observacoes        String
+  observacoes        String?
   status_projeto     String?   @default("Pendente")
   updatedAt          DateTime? @default(now())
   createdAt          DateTime? @default(now())
-  usuarioId          Int
-  usuario            usuarios  @relation(fields: [usuarioId], references: [id])
+  usuarioId          Int?
+  usuario            usuarios?  @relation(fields: [usuarioId], references: [id])
   fotos              String? // Vai guardar as URLs separadas por vírgula
 }
 
