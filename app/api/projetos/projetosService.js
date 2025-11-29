@@ -55,6 +55,15 @@ export const ProjetoService = {
             // Busca no banco usando Prisma
             const projeto = await prisma.projetos.findUnique({
                 where: { id: id }, // ID convertido no route.js
+                //puxando o nome do docente para o card de projetos/[id]
+                include: {
+                    usuario:{
+                        select:{
+                            id: true,
+                            nome_usuario: true,
+                        }
+                    }
+                }
             });
 
             return projeto; // retorna o projeto procurado ou null
@@ -161,4 +170,5 @@ export const ProjetoService = {
     },
 
 }
+
 
