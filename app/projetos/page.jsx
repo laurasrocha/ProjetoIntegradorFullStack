@@ -27,7 +27,7 @@ export default function Projetos() {
 
   // Estado para armazenar o termo buscado no input de pesquisa
   const [searchTerm, setSearchTerm] = useState("");
-  
+
    //filtra por nome e membros do projeto
   const filteredProjects = projetos.filter((project) => {
     const matchesSearch =
@@ -123,4 +123,3 @@ export default function Projetos() {
     </div>
   );
 }
-
