@@ -27,6 +27,19 @@ export default function Projetos() {
 
   // Estado para armazenar o termo buscado no input de pesquisa
   const [searchTerm, setSearchTerm] = useState("");
+  
+   //filtra por nome e membros do projeto
+  const filteredProjects = projetos.filter((project) => {
+    const matchesSearch =
+      (project.nome_projeto || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      (project.membros_projeto || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+    return matchesSearch
+  });
 
   const buscarProjetos = async () => {
     try {
@@ -105,8 +118,9 @@ export default function Projetos() {
           />
           <ThemeSwitch />
         </div>
-        <ListaProjetos projetos={projetos} />
+        <ListaProjetos projetos={filteredProjects} />
       </div>
     </div>
   );
 }
+
