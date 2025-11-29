@@ -116,15 +116,15 @@ export default function SupervisorPage() {
           className={`
             w-[105px] h-[35px] border-2 border-[#004A8D] px-1 py-1 ml-auto rounded-xl
             text-black dark:text-white dark:bg-gray-800
-            ${project.status_projeto === "Pendente" ? "bg-yellow-400 text-black dark:bg-amber-400" : ""}
+            ${project.status_projeto === "Pendente" ? "bg-yellow-400 text-black dark:bg-yellow-400" : ""}
             ${project.status_projeto === "Aprovado" ? "bg-green-500 text-white dark:bg-green-500" : ""}
             ${project.status_projeto === "Recusado" ? "bg-red-500 text-white dark:bg-red-500" : ""}
           `}
         >
-          <option value="">Selecione</option>
-          <option value="Pendente">Pendente</option>
-          <option value="Aprovado">Aprovado</option>
-          <option value="Recusado">Recusado</option>
+          <option className="bg-gray-700 text-white" value="">Selecione</option>
+          <option className="bg-gray-700 text-white" value="Pendente">Pendente</option>
+          <option className="bg-gray-700 text-white" value="Aprovado">Aprovado</option>
+          <option className="bg-gray-700 text-white" value="Recusado">Recusado</option>
         </select>
 
         <h3 className="text-lg w-28 font-semibold text-[#004A8D] dark:text-white">
@@ -246,3 +246,4 @@ export default function SupervisorPage() {
     </div>
   );
 }
+
