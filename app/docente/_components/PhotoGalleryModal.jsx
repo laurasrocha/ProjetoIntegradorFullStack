@@ -25,7 +25,7 @@ export function PhotoGalleryModal({ fotos, onClose }) {
               
               {/* Verifica se é PDF ou Imagem */}
               {foto.endsWith('.pdf') ? (
-                <a href={foto} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center h-48 hover:bg-gray-200 transition">
+                <a href={foto} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center h-full hover:bg-gray-200 transition">
                    <span className="text-red-500 font-bold text-xl">PDF</span>
                    <span className="text-sm text-gray-600 mt-2">Clique para abrir</span>
                 </a>
@@ -48,4 +48,5 @@ export function PhotoGalleryModal({ fotos, onClose }) {
       </div>
     </div>
   );
+
 }
