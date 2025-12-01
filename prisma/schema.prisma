@@ -28,7 +28,7 @@ model PasswordResetToken {
 
 model projetos {
   UUID               String           @unique @default(uuid())
-  id                 Int              @id @unique @default(autoincrement())
+  id                 Int              @id @default(autoincrement())
   nome_projeto       String
   descricao          String?          @default("sem descrição")
   membros_projeto    String
