@@ -1,9 +1,7 @@
 "use client";
-
-import { useState, useRef } from "react"; 
+import { useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-
 import {
   Sheet,
   SheetTrigger,
@@ -11,6 +9,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+
+import { createClient } from "@supabase/supabase-js";
 
 // URL do backend
 const URL_DOMINIO = process.env.NEXT_PUBLIC_URL_DOMINIO;
@@ -85,56 +85,68 @@ export function ProjectForm({ buscarProjetos }) {
     setArquivos((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
-  // Função de submit
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
   const handleSubmit = async () => {
     if (!nome || !membros || !data) {
       return toast.error("Preencha os campos obrigatórios.");
     }
 
-    // MUDANÇA CRÍTICA: USAR FORMDATA AO INVÉS DE JSON SIMPLES
-    const formData = new FormData();
-    formData.append("nome_projeto", nome);
-    formData.append("descricao", descricao);
-    formData.append("membros_projeto", membros);
-    formData.append("turma_projeto", turma);
-    formData.append("data_apresentacao", data);
-    formData.append("convidados", convidados === "sim");
-    formData.append(
-      "detalhesConvidados",
-      convidados === "sim" ? detalhesConvidados : ""
-    );
-    formData.append("observacoes", temObservacao ? observacaoTexto : "");
-    formData.append("usuarioId", 1); 
-
-    // Adiciona os arquivos ao FormData
-    arquivos.forEach((file) => {
-      formData.append("arquivos", file); 
-    });
-
     try {
-      // Envia com o header correto para arquivos
-      const res = await axios.post(`${URL_DOMINIO}/projetos`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      let urlsArquivos = [];
+
+      // 🔵 1. Fazer upload dos arquivos no Supabase
+      for (const file of arquivos) {
+        const extensao = file.name.split(".").pop();
+        const nomeArquivo = `projetos/${Date.now()}-${Math.random()
+          .toString(36)
+          .substring(2)}.${extensao}`;
+
+        // Upload
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("arquivos")
+          .upload(nomeArquivo, file);
+
+        if (uploadError) {
+          console.error(uploadError);
+          return toast.error("Erro ao enviar arquivo para o Supabase.");
+        }
+
+        // Gerar URL pública
+        const { data: urlPublica } = supabase.storage
+          .from("arquivos")
+          .getPublicUrl(nomeArquivo);
+
+        urlsArquivos.push(urlPublica.publicUrl);
+      }
+
+      // 🔵 2. Criar o projeto normalmente no backend
+      const res = await axios.post(`${URL_DOMINIO}/projetos`, {
+        nome_projeto: nome,
+        descricao,
+        membros_projeto: membros,
+        turma_projeto: turma,
+        data_apresentacao: data,
+        convidados: convidados === "sim",
+        detalhesConvidados:
+          convidados === "sim" ? detalhesConvidados : "",
+        observacoes: temObservacao ? observacaoTexto : "",
+        usuarioId: 1,
+        fotos: urlsArquivos.join(","), // SALVANDO AS URLs AQUI!
       });
 
-      console.log("Resposta do backend:", res.data);
       toast.success(`Projeto "${nome}" criado com sucesso.`);
 
-      // Limpa o formulário e fecha o Sheet
       resetForm();
       setOpen(false);
-      // Atualiza a lista de projetoss
       buscarProjetos();
     } catch (err) {
-      console.error("Erro ao cadastrar projeto:", err);
-      // Garante que o erro seja uma string
-      const errorMessage =
-        err.response?.data?.message ||
-        err.message ||
-        `Projeto "${nome}" não foi criado.`;
-      toast.error(errorMessage);
+      console.error(err);
+      toast.error("Erro ao criar projeto.");
     }
   };
 
