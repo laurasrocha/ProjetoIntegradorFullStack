@@ -27,23 +27,32 @@ model PasswordResetToken {
 }
 
 model projetos {
-  UUID               String    @unique @default(uuid())
-  id                 Int       @id @unique @default(autoincrement())
+  UUID               String           @unique @default(uuid())
+  id                 Int              @id @unique @default(autoincrement())
   nome_projeto       String
-  descricao          String?   @default("sem descrição")
+  descricao          String?          @default("sem descrição")
   membros_projeto    String
   turma_projeto      String
-  data_criacao       DateTime? @default(now())
+  data_criacao       DateTime?        @default(now())
   data_apresentacao  String
   convidados         Boolean
   detalhesConvidados String?
   observacoes        String?
-  status_projeto     String?   @default("Pendente")
-  updatedAt          DateTime? @default(now())
-  createdAt          DateTime? @default(now())
+  status_projeto     String?          @default("Pendente")
+  updatedAt          DateTime?        @default(now())
+  createdAt          DateTime?        @default(now())
   usuarioId          Int?
-  usuario            usuarios?  @relation(fields: [usuarioId], references: [id])
-  fotos              String? // Vai guardar as URLs separadas por vírgula
+  usuario            usuarios?        @relation(fields: [usuarioId], references: [id])
+  arquivos           ProjetoArquivo[]
+}
+
+model ProjetoArquivo {
+  id        Int    @id @default(autoincrement())
+  url       String
+  tipo      String // "image", "pdf", etc
+  projetoId Int
+
+  projeto projetos @relation(fields: [projetoId], references: [id])
 }
 
 enum TipoUsuario {
