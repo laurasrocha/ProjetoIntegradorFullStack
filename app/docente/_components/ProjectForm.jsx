@@ -108,7 +108,7 @@ export function ProjectForm({ buscarProjetos }) {
 
         // Upload
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("arquivos")
+          .from("projetos")
           .upload(nomeArquivo, file);
 
         if (uploadError) {
@@ -118,7 +118,7 @@ export function ProjectForm({ buscarProjetos }) {
 
         // Gerar URL pública
         const { data: urlPublica } = supabase.storage
-          .from("arquivos")
+          .from("projetos")
           .getPublicUrl(nomeArquivo);
 
         urlsArquivos.push(urlPublica.publicUrl);

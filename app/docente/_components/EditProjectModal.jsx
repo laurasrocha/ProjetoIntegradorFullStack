@@ -81,18 +81,18 @@ export function EditProjectModal({ projeto, onClose }) {
       const dataToSend = new FormData();
 
       // Adiciona campos de texto, ignorando campos de sistema
-      for (const key in formData) {
-        if (
-          key !== "fotos" &&
-          key !== "id" &&
-          key !== "usuario" &&
-          key !== "createdAt" &&
-          key !== "updatedAt" &&
-          key !== "UUID"
-        ) {
-          dataToSend.append(key, formData[key]);
-        }
-      }
+      // for (const key in formData) {
+      //   if (
+      //     key !== "fotos" &&
+      //     key !== "id" &&
+      //     key !== "usuario" &&
+      //     key !== "createdAt" &&
+      //     key !== "updatedAt" &&
+      //     key !== "UUID"
+      //   ) {
+      //     dataToSend.append(key, formData[key]);
+      //   }
+      // }
 
       // Envia a lista das fotos antigas que DEVEMOS MANTER
       fotosExistentes.forEach((fotoUrl) => {

@@ -17,8 +17,6 @@ export async function GET() {
   }
 }
 
-// POST -> cria projeto (AGORA sem uploads!!!)
-
 export async function POST(req) {
   try {
     const body = await req.json();
@@ -33,7 +31,7 @@ export async function POST(req) {
       detalhesConvidados,
       observacoes,
       usuarioId,
-      fotos
+      projetos // <-- lista de URLs vinda do frontend
     } = body;
 
     const projetoCriado = await prisma.projetos.create({
@@ -46,14 +44,33 @@ export async function POST(req) {
         convidados,
         detalhesConvidados,
         observacoes,
-        usuarioId,
-        fotos // URLs vindas do frontend já separadas por vírgula
+        usuario: usuarioId
+          ? {
+              connect: { id: usuarioId }
+            }
+          : undefined,
+
+        // Criar registros na tabela ProjetoArquivo
+        projetos: projetos && projetos.length > 0
+          ? {
+              create: projetos.map((url) => ({
+                url,
+                tipo: url.endsWith(".pdf") ? "pdf" : "image"
+              }))
+            }
+          : undefined
+      },
+      include: {
+        projetos: true
       }
     });
 
     return NextResponse.json(projetoCriado, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar projeto:", error);
-    return NextResponse.json({ error: "Erro interno ao cadastrar" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro interno ao cadastrar" },
+      { status: 500 }
+    );
   }
 }

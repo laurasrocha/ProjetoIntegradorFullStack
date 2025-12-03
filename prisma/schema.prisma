@@ -43,7 +43,7 @@ model projetos {
   createdAt          DateTime?        @default(now())
   usuarioId          Int?
   usuario            usuarios?        @relation(fields: [usuarioId], references: [id])
-  arquivos           ProjetoArquivo[]
+  projetos           ProjetoArquivo[]
 }
 
 model ProjetoArquivo {
