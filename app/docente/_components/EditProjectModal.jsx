@@ -4,6 +4,13 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { FiX, FiUploadCloud, FiTrash2 } from "react-icons/fi";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
 
 // Função auxiliar para formatar data para o input (AAAA-MM-DD)
 const formatarDataParaInput = (dataString) => {
@@ -78,46 +85,43 @@ export function EditProjectModal({ projeto, onClose }) {
     const toastId = toast.loading("Atualizando projeto...");
 
     try {
-      const dataToSend = new FormData();
+      let novasUrls = [];
 
-      // Adiciona campos de texto, ignorando campos de sistema
-      // for (const key in formData) {
-      //   if (
-      //     key !== "fotos" &&
-      //     key !== "id" &&
-      //     key !== "usuario" &&
-      //     key !== "createdAt" &&
-      //     key !== "updatedAt" &&
-      //     key !== "UUID"
-      //   ) {
-      //     dataToSend.append(key, formData[key]);
-      //   }
-      // }
+      // 🔵 Upload direto para o Supabase
+      for (const file of novosArquivos) {
+        const ext = file.name.split(".").pop();
+        const filename = `projeto_${projeto.id}_${Date.now()}.${ext}`;
 
-      // Envia a lista das fotos antigas que DEVEMOS MANTER
-      fotosExistentes.forEach((fotoUrl) => {
-        dataToSend.append("fotosMantidas", fotoUrl);
-      });
+        const { error: uploadError } = await supabase.storage
+          .from("projetos")
+          .upload(filename, file);
 
-      // Envia os NOVOS arquivos
-      novosArquivos.forEach((file) => {
-        dataToSend.append("arquivos", file);
-      });
+        if (uploadError) throw uploadError;
 
-      // Envia tudo para o PUT
-      await axios.put(`/api/projetos/${projeto.id}`, dataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
+        const publicUrl =
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/projetos/${filename}`;
+
+        novasUrls.push(publicUrl);
+      }
+
+      // 🔵 Fotos finais = antigas que foram mantidas + novas URLs
+      const fotosFinal = [...fotosExistentes, ...novasUrls];
+
+      // 🔵 Enviar JSON puro para o backend
+      await axios.put(`/api/projetos/${projeto.id}`, {
+        ...formData,
+        fotos: fotosFinal, // ARRAY
       });
 
       toast.success("Projeto atualizado!", { id: toastId });
-
-      onClose(); // Fecha o modal
-      router.refresh(); // Atualiza os dados na tela sem recarregar a página inteira
+      onClose();
+      router.refresh();
     } catch (error) {
       console.error("Erro ao atualizar:", error);
       toast.error("Erro ao atualizar projeto.", { id: toastId });
     }
   };
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
