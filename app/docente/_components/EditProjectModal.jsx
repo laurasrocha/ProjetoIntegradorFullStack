@@ -1,3 +1,5 @@
+// EditProjectModal.jsx
+
 "use client";
 import { useState, useRef } from "react";
 import axios from "axios";
@@ -81,46 +83,49 @@ export function EditProjectModal({ projeto, onClose }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const toastId = toast.loading("Atualizando projeto...");
+  e.preventDefault();
+  const toastId = toast.loading("Atualizando projeto...");
 
-    try {
-      let novasUrls = [];
+  try {
+    let novasUrls = [];
 
-      // 🔵 Upload direto para o Supabase
-      for (const file of novosArquivos) {
-        const ext = file.name.split(".").pop();
-        const filename = `projeto_${projeto.id}_${Date.now()}.${ext}`;
+    // 🔵 Upload direto para o Supabase
+    for (const file of novosArquivos) {
+      const ext = file.name.split(".").pop();
+      const filename = `projeto_${projeto.id}_${Date.now()}.${ext}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from("projetos")
-          .upload(filename, file);
+      const { error: uploadError } = await supabase.storage
+        .from("projetos")
+        .upload(filename, file);
 
-        if (uploadError) throw uploadError;
+      if (uploadError) throw uploadError;
 
-        const publicUrl =
-          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/projetos/${filename}`;
+      const publicUrl =
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/projetos/${filename}`;
 
-        novasUrls.push(publicUrl);
-      }
-
-      // 🔵 Fotos finais = antigas que foram mantidas + novas URLs
-      const fotosFinal = [...fotosExistentes, ...novasUrls];
-
-      // 🔵 Enviar JSON puro para o backend
-      await axios.put(`/api/projetos/${projeto.id}`, {
-        ...formData,
-        fotos: fotosFinal, // ARRAY
-      });
-
-      toast.success("Projeto atualizado!", { id: toastId });
-      onClose();
-      router.refresh();
-    } catch (error) {
-      console.error("Erro ao atualizar:", error);
-      toast.error("Erro ao atualizar projeto.", { id: toastId });
+      novasUrls.push(publicUrl);
     }
-  };
+
+    // 🔵 Fotos finais = antigas que foram mantidas + novas URLs
+    const fotosFinal = [...fotosExistentes, ...novasUrls];
+
+    // 🔵 Enviar JSON puro para o backend - ALTERADO AQUI
+    await axios.put(`/api/projetos/${projeto.id}`, {
+      ...formData,
+      projetos: fotosFinal.map(url => ({  // 🔴 Mude para "projetos" e envie array de objetos
+        url,
+        tipo: url.endsWith(".pdf") ? "pdf" : "image"
+      })),
+    });
+
+    toast.success("Projeto atualizado!", { id: toastId });
+    onClose();
+    router.refresh();
+  } catch (error) {
+    console.error("Erro ao atualizar:", error);
+    toast.error("Erro ao atualizar projeto.", { id: toastId });
+  }
+};
 
 
   return (

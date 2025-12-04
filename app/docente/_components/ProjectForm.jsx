@@ -1,3 +1,4 @@
+// ProjectForm.jsx
 "use client";
 import { useState, useRef } from "react";
 import axios from "axios";
@@ -92,63 +93,64 @@ export function ProjectForm({ buscarProjetos }) {
   );
 
   const handleSubmit = async () => {
-    if (!nome || !membros || !data) {
-      return toast.error("Preencha os campos obrigatórios.");
-    }
+  if (!nome || !membros || !data) {
+    return toast.error("Preencha os campos obrigatórios.");
+  }
 
-    try {
-      let urlsArquivos = [];
+  try {
+    let urlsArquivos = [];
 
-      // 🔵 1. Fazer upload dos arquivos no Supabase
-      for (const file of arquivos) {
-        const extensao = file.name.split(".").pop();
-        const nomeArquivo = `projetos/${Date.now()}-${Math.random()
-          .toString(36)
-          .substring(2)}.${extensao}`;
+    // 🔵 2. Fazer upload dos arquivos no Supabase
+    for (const file of arquivos) {
+      const extensao = file.name.split(".").pop();
+      const nomeArquivo = `projetos/${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2)}.${extensao}`;
 
-        // Upload
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("projetos")
-          .upload(nomeArquivo, file);
+      // Upload
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("projetos")
+        .upload(nomeArquivo, file);
 
-        if (uploadError) {
-          console.error(uploadError);
-          return toast.error("Erro ao enviar arquivo para o Supabase.");
-        }
-
-        // Gerar URL pública
-        const { data: urlPublica } = supabase.storage
-          .from("projetos")
-          .getPublicUrl(nomeArquivo);
-
-        urlsArquivos.push(urlPublica.publicUrl);
+      if (uploadError) {
+        console.error(uploadError);
+        toast.error("Erro ao enviar arquivo para o Supabase.");
+        continue;
       }
 
-      // 🔵 2. Criar o projeto normalmente no backend
-      const res = await axios.post(`${URL_DOMINIO}/projetos`, {
-        nome_projeto: nome,
-        descricao,
-        membros_projeto: membros,
-        turma_projeto: turma,
-        data_apresentacao: data,
-        convidados: convidados === "sim",
-        detalhesConvidados:
-          convidados === "sim" ? detalhesConvidados : "",
-        observacoes: temObservacao ? observacaoTexto : "",
-        usuarioId: 1,
-        fotos: urlsArquivos.join(","), // SALVANDO AS URLs AQUI!
-      });
+      // Gerar URL pública
+      const { data: urlPublica } = supabase.storage
+        .from("projetos")
+        .getPublicUrl(nomeArquivo);
 
-      toast.success(`Projeto "${nome}" criado com sucesso.`);
-
-      resetForm();
-      setOpen(false);
-      buscarProjetos();
-    } catch (err) {
-      console.error(err);
-      toast.error("Erro ao criar projeto.");
+      urlsArquivos.push(urlPublica.publicUrl);
     }
-  };
+
+    // 🔵 3. Criar o projeto normalmente no backend
+    const res = await axios.post(`${URL_DOMINIO}/projetos`, {
+      nome_projeto: nome,
+      descricao,
+      membros_projeto: membros,
+      turma_projeto: turma,
+      data_apresentacao: data,
+      convidados: convidados === "sim",
+      detalhesConvidados:
+        convidados === "sim" ? detalhesConvidados : "",
+      observacoes: temObservacao ? observacaoTexto : "",
+      usuarioId: 1,
+      projetos: urlsArquivos, // 🔴 ALTEREI AQUI: Envia como ARRAY, não como string
+    });
+
+    toast.success(`Projeto "${nome}" criado com sucesso.`);
+
+    resetForm();
+    setOpen(false);
+    buscarProjetos();
+  } catch (err) {
+    console.error(err);
+    toast.error("Erro ao criar projeto.");
+  }
+};
 
   return (
     <div className="text-center space-x-4">

@@ -1,3 +1,5 @@
+// page.jsx
+
 import Header from "@/app/_components/header";
 import formatarComCasas from "@/lib/casasdecimais";
 import BtnExcluir from "@/app/projetos/[id]/_components/btnExcluir";

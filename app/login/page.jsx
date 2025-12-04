@@ -148,7 +148,7 @@ export default function Login() {
               />
 
               <span className="text-[#004A8D] dark:text-white font-sans font-semibold text-xs">
-                Supervisão
+                Supervisor
               </span>
             </div>
 

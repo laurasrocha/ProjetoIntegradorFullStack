@@ -8,6 +8,9 @@ export async function GET() {
   try {
     const projetos = await prisma.projetos.findMany({
       orderBy: { id: "desc" },
+      include: {
+        projetos: true, // Inclui as fotos/arquivos do Supabase
+      },
     });
 
     return NextResponse.json(projetos);
@@ -31,24 +34,20 @@ export async function POST(req) {
       detalhesConvidados,
       observacoes,
       usuarioId,
-      projetos // <-- lista de URLs vinda do frontend
+      projetos // <-- AGORA é um array de URLs
     } = body;
 
     const projetoCriado = await prisma.projetos.create({
       data: {
         nome_projeto,
-        descricao,
+        descricao: descricao || "sem descrição",
         membros_projeto,
         turma_projeto,
         data_apresentacao,
         convidados,
         detalhesConvidados,
         observacoes,
-        usuario: usuarioId
-          ? {
-              connect: { id: usuarioId }
-            }
-          : undefined,
+        usuarioId: usuarioId || null, // 🔴 CORREÇÃO AQUI: use usuarioId diretamente
 
         // Criar registros na tabela ProjetoArquivo
         projetos: projetos && projetos.length > 0

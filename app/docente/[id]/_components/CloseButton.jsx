@@ -1,5 +1,6 @@
+// CloseButton.jsx
+// analisar arquivo para checar sua funcionalidade
 "use client";
-
 import { useRouter } from "next/navigation";
 
 export default function CloseButton() {

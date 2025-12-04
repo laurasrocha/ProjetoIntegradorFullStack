@@ -1,3 +1,5 @@
+// listaprojetos.jsx
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,21 +15,24 @@ function formatarComCasas(numero, casas) {
 }
 
 export default function ListaProjetos({ projetos }) {
-
+  console.log("Projetos recebidos:", projetos);
   return (
     <div className="w-full h-full bg-slate-100 dark:bg-gray-900 flex flex-wrap gap-6 justify-center items-center sm:mt-8 p-4">
       {projetos && projetos.length > 0 ? (
         projetos.map((item) => {
+          // ============================
+          // NOVO: Arquivos do Supabase
+          // ============================
+          const arquivos = item.projetos || [];   // agora é ProjetoArquivo[]
 
-          // --- LÓGICA INTELIGENTE PARA FOTO DE CAPA ---
-          const listaFotos = item.fotos ? item.fotos.split(',') : [];
-          const primeiroArquivo = listaFotos.length > 0 ? listaFotos[0] : null;
+          // Primeiro arquivo (pode ser imagem ou pdf)
+          const primeiroArquivo = arquivos.length > 0 ? arquivos[0] : null;
 
-          // Só usa como capa se NÃO for PDF
+          // Seleciona imagem de capa (se não for PDF)
           const fotoCapa =
             primeiroArquivo &&
-            !primeiroArquivo.toLowerCase().endsWith(".pdf")
-              ? primeiroArquivo
+            primeiroArquivo.tipo !== "pdf"
+              ? primeiroArquivo.url
               : null;
 
           return (
@@ -39,7 +44,9 @@ export default function ListaProjetos({ projetos }) {
               <div className="w-full flex items-center justify-center">
                 <Card className="w-[90vw] sm:w-[400px] h-full shadow-xl hover:shadow-2xl hover:tracking-wide sm:cursor-pointer flex flex-col items-center bg-slate-100 dark:bg-gray-800 transition-all duration-300 hover:scale-105 overflow-hidden">
 
-                  {/* Container da Imagem */}
+                  {/* ============================
+                      IMAGEM DE CAPA
+                  ============================ */}
                   <div className="w-full h-[200px] relative bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                     {fotoCapa ? (
                       <Image
@@ -51,19 +58,17 @@ export default function ListaProjetos({ projetos }) {
                         priority={item.id < 5}
                       />
                     ) : (
-                      // --- Quando NÃO houver imagem ---
                       <span className="text-gray-500 dark:text-gray-400 text-sm">
                         Sem imagem adicionada
                       </span>
                     )}
 
-                    {/* Selo para PDF */}
-                    {primeiroArquivo &&
-                      primeiroArquivo.toLowerCase().endsWith(".pdf") && (
-                        <div className="absolute bottom-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
-                          PDF Anexado
-                        </div>
-                      )}
+                    {/* SELO SE O PRIMEIRO ARQUIVO FOR PDF */}
+                    {primeiroArquivo && primeiroArquivo.tipo === "pdf" && (
+                      <div className="absolute bottom-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow">
+                        PDF Anexado
+                      </div>
+                    )}
                   </div>
 
                   <CardHeader className="w-full text-center flex-grow">

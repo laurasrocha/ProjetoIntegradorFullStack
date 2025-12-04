@@ -48,15 +48,38 @@ export async function PUT(req, context) {
       return NextResponse.json({ error: "Nenhum dado enviado" }, { status: 400 });
     }
 
+    // 🔴 SEPARAR os dados do projeto dos arquivos
+    const { projetos, ...dadosProjeto } = dados;
+
     // Ajuste de status se necessário
-    if (dados.status !== undefined) {
-      dados.status_projeto = dados.status;
-      delete dados.status;
+    if (dadosProjeto.status !== undefined) {
+      dadosProjeto.status_projeto = dadosProjeto.status;
+      delete dadosProjeto.status;
     }
 
+    // 🔴 1. Deletar arquivos antigos
+    await prisma.projetoArquivo.deleteMany({
+      where: { projetoId: projetoId }
+    });
+
+    // 🔴 2. Atualizar projeto principal
     const atualizado = await prisma.projetos.update({
       where: { id: projetoId },
-      data: dados,
+      data: {
+        ...dadosProjeto,
+        // 🔴 3. Criar novos registros de arquivos (se houver)
+        projetos: projetos && projetos.length > 0
+          ? {
+              create: projetos.map(item => ({
+                url: item.url,
+                tipo: item.tipo
+              }))
+            }
+          : undefined
+      },
+      include: {
+        projetos: true // 🔴 Incluir arquivos na resposta
+      }
     });
 
     return NextResponse.json(atualizado);

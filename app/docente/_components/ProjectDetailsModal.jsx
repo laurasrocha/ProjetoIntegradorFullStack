@@ -1,3 +1,5 @@
+// ProjectDetailsModal.jsx
+
 export function ProjectDetailsModal({ projeto, onClose }) {
   if (!projeto) return null;
 

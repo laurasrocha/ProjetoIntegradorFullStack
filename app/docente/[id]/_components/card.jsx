@@ -1,3 +1,4 @@
+// card.jsx
 "use client";
 import { useState } from "react";
 import { FiTrash2, FiEdit, FiArrowLeft, FiImage } from "react-icons/fi";

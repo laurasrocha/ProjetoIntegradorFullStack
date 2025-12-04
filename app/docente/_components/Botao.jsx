@@ -1,3 +1,4 @@
+// botao 
 'use client'
 
 export default function Botao({ children, className = '', ...props }) {

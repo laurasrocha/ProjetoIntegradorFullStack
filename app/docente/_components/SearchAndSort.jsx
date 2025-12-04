@@ -1,3 +1,4 @@
+// SearchAndSort.jsx
 'use client'
 
 export function SearchAndSort({ busca, setBusca, ordenacao, setOrdenacao }) {
