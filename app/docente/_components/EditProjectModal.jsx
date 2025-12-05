@@ -112,7 +112,7 @@ export function EditProjectModal({ projeto, onClose }) {
     // 🔵 Enviar JSON puro para o backend - ALTERADO AQUI
     await axios.put(`/api/projetos/${projeto.id}`, {
       ...formData,
-      projetos: fotosFinal.map(url => ({  // 🔴 Mude para "projetos" e envie array de objetos
+      projetos: fotosFinal.map(url => ({  // Mude para "projetos" e envie array de objetos
         url,
         tipo: url.endsWith(".pdf") ? "pdf" : "image"
       })),
