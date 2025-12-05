@@ -72,7 +72,6 @@ export function ProjectForm({ buscarProjetos }) {
     setArquivos((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
 
-
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -112,7 +111,8 @@ export function ProjectForm({ buscarProjetos }) {
         urlsArquivos.push(urlPublica.publicUrl);
       }
 
-      // 🔵 3. Criar o projeto normalmente no backend
+      const usuarioId = localStorage.getItem("usuarioId");
+
       const res = await axios.post(`${URL_DOMINIO}/projetos`, {
         nome_projeto: nome,
         descricao,
@@ -120,11 +120,10 @@ export function ProjectForm({ buscarProjetos }) {
         turma_projeto: turma,
         data_apresentacao: data,
         convidados: convidados === "sim",
-        detalhesConvidados:
-          convidados === "sim" ? detalhesConvidados : "",
+        detalhesConvidados: convidados === "sim" ? detalhesConvidados : "",
         observacoes: temObservacao ? observacaoTexto : "",
-        usuarioId: 1,
-        projetos: urlsArquivos, // 🔴 ALTEREI AQUI: Envia como ARRAY, não como string
+        usuarioId: Number(usuarioId), // 🔹 pega o ID do docente logado
+        projetos: urlsArquivos,
       });
 
       toast.success(`Projeto "${nome}" criado com sucesso.`);
@@ -146,7 +145,9 @@ export function ProjectForm({ buscarProjetos }) {
             className="w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
                 duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
                 active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100"
-          >Novo Projeto</button>
+          >
+            Novo Projeto
+          </button>
         </SheetTrigger>
         <SheetContent className="bg-white p-0 dark:bg-gray-800 overflow-y-auto">
           <SheetHeader className="p-4 border-b">
@@ -340,10 +341,12 @@ export function ProjectForm({ buscarProjetos }) {
                 </div>
               )}
 
-              <button onClick={handleSubmit}
+              <button
+                onClick={handleSubmit}
                 className="w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
                  duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-                active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100">
+                active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100"
+              >
                 Concluir cadastro
               </button>
             </div>

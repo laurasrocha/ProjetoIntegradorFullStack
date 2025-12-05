@@ -19,6 +19,7 @@ export default function Page() {
   const [ordenacao, setOrdenacao] = useState("az");
   const [projetoSelecionado, setProjetoSelecionado] = useState(null);
   const [projetoEditando, setProjetoEditando] = useState(null);
+  const [usuarioNome, setUsuarioNome] = useState("");
 
   const buscarProjetos = async () => {
     try {
@@ -29,6 +30,15 @@ export default function Page() {
       console.error("Erro ao buscar projetos:", err);
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const nome = localStorage.getItem("usuarioNome");
+      if (nome) setUsuarioNome(nome);
+    }
+  }, []);
+
+
 
   useEffect(() => {
     buscarProjetos();
@@ -63,7 +73,7 @@ export default function Page() {
         : "";
       return nomeProjeto.includes(termo);
     })
-    .slice() 
+    .slice()
     .sort((a, b) => {
       const nomeA = a.nome_projeto ? a.nome_projeto.toLowerCase() : "";
       const nomeB = b.nome_projeto ? b.nome_projeto.toLowerCase() : "";
@@ -108,7 +118,7 @@ export default function Page() {
             active:tracking-wide active:text-white active:shadow-none active:translate-y-2 active:duration-100
             items-center justify-center text-center"
           >
-            TELA INICIAL
+            SAIR
           </Link>
         }
         btnMobile={
@@ -119,47 +129,52 @@ export default function Page() {
             active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
           >
             <HiMiniArrowRightStartOnRectangle className="w-[35px]" size={18} />
-            TELA INICIAL
+           SAIR
           </Link>
         }
       />
 
-      <div className="w-screen h-screen flex justify-between bg-slate-100 dark:bg-gray-900 flex-col sm:flex-row">
-        <div className="flex flex-1 justify-start">
-          {/* Sidebar */}
-          <div className="w-full h-full sm:w-72 bg-slate-100 dark:bg-gray-900 p-4 flex flex-col gap-6">
-            <h2 className="text-lg font-semibold text-center">
-              Gerenciar Projetos
-            </h2>
+      <div className="w-screen h-screen  bg-slate-100 dark:bg-gray-900">
+        <div className="w-full h-[40px] flex justify-between p-4">
+          <h1 className="text-xs sm:text-sm font-semibold">
+            Olá, docente {usuarioNome || "carregando..."}
+          </h1>
 
-            {/* Buscar Projeto */}
-            <input
-              type="text"
-              placeholder="Buscar projeto..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              className="p-2 rounded w-[90vw] sm:w-full border-2 border-[#004A8D]"
-            />
-
-            {/* Ordem Alfabética */}
-            <select
-              value={ordenacao}
-              onChange={(e) => setOrdenacao(e.target.value)}
-              className="border-2 border-[#004A8D] dark:bg-gray-800 p-2 rounded w-[90vw] sm:w-full text-sm"
-            >
-              <option value="az">Ordem Alfabética (A-Z)</option>
-              <option value="za">Ordem Alfabética (Z-A)</option>
-            </select>
-
-            {/* Novo Projeto */}
-            <ProjectForm buscarProjetos={buscarProjetos} />
-          </div>
+          {/* Botão DarkTheme */}
+          <ThemeSwitch />
         </div>
-        <div className="w-full">
-          <div className="w-full h-[40px] flex justify-end p-2">
-            {/* Botão DarkTheme */}
-            <ThemeSwitch />
+        <div className="w-full flex justify-between  flex-col sm:flex-row">
+          <div className="flex flex-1 justify-start">
+            {/* Sidebar */}
+            <div className="w-full h-full sm:w-72 bg-slate-100 dark:bg-gray-900 p-4 flex flex-col gap-6">
+              <h2 className="text-lg font-semibold text-center">
+                Gerenciar Projetos
+              </h2>
+
+              {/* Buscar Projeto */}
+              <input
+                type="text"
+                placeholder="Buscar projeto..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="p-2 rounded w-[90vw] sm:w-full border-2 border-[#004A8D]"
+              />
+
+              {/* Ordem Alfabética */}
+              <select
+                value={ordenacao}
+                onChange={(e) => setOrdenacao(e.target.value)}
+                className="border-2 border-[#004A8D] dark:bg-gray-800 p-2 rounded w-[90vw] sm:w-full text-sm"
+              >
+                <option value="az">Ordem Alfabética (A-Z)</option>
+                <option value="za">Ordem Alfabética (Z-A)</option>
+              </select>
+
+              {/* Novo Projeto */}
+              <ProjectForm buscarProjetos={buscarProjetos} />
+            </div>
           </div>
+
           <div className="w-full sm:h-auto flex flex-col items-center">
             <h1 className="mt-10 hidden sm:block text-xl font-semibold">
               Todos os projetos em andamento
