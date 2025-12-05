@@ -3,22 +3,27 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-// GET -> lista todos os projetos
+// GET -> lista todos os projetos com arquivos e docente
 export async function GET() {
   try {
     const projetos = await prisma.projetos.findMany({
       orderBy: { id: "desc" },
       include: {
-        projetos: true, // Inclui as fotos/arquivos do Supabase
+        projetos: true,   // arquivos do projeto
+        usuario: true,    // docente responsável (pode ser null)
       },
     });
 
     return NextResponse.json(projetos);
   } catch (error) {
-    console.error("Erro GET:", error);
-    return NextResponse.json({ error: "Erro ao listar projetos" }, { status: 500 });
+    console.error("Erro GET /projetos:", error);
+    return NextResponse.json(
+      { error: "Erro ao listar projetos" },
+      { status: 500 }
+    );
   }
 }
+
 
 export async function POST(req) {
   try {
@@ -34,7 +39,9 @@ export async function POST(req) {
       detalhesConvidados,
       observacoes,
       usuarioId,
-      projetos // <-- AGORA é um array de URLs
+      docente_id,    // 🔹 NOVO
+      docente_nome,  // 🔹 NOVO
+      projetos // array de URLs
     } = body;
 
     const projetoCriado = await prisma.projetos.create({
@@ -47,16 +54,17 @@ export async function POST(req) {
         convidados,
         detalhesConvidados,
         observacoes,
-        usuarioId: usuarioId || null, // 🔴 CORREÇÃO AQUI: use usuarioId diretamente
+        usuarioId: usuarioId || null,
+        docente_id,    // 🔹 ADICIONADO
+        docente_nome,  // 🔹 ADICIONADO
 
-        // Criar registros na tabela ProjetoArquivo
         projetos: projetos && projetos.length > 0
           ? {
-              create: projetos.map((url) => ({
-                url,
-                tipo: url.endsWith(".pdf") ? "pdf" : "image"
-              }))
-            }
+            create: projetos.map((url) => ({
+              url,
+              tipo: url.endsWith(".pdf") ? "pdf" : "image"
+            }))
+          }
           : undefined
       },
       include: {
