@@ -12,6 +12,8 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
+import { toast } from 'sonner';
+import { MdError } from 'react-icons/md';
 
 
 export default function FormMobile() {
@@ -23,6 +25,38 @@ export default function FormMobile() {
     const [confSenha, setConfSenha] = useState("");
     const [tipo_usuario, setTipoUser] = useState("");
 
+    // estados de erro
+    const [errorNome, setErrorNome] = useState("");
+    const [errorEmail, setErrorEmail] = useState("");
+    const [errorSenha, setErrorSenha] = useState("");
+    const [errorConfSenha, setErrorConfSenha] = useState("");
+
+
+    // funcoes de validação simples
+    function validarNome(nome) {
+        if (nome.length < 3) return "O nome deve ter pelo menos 3 caracteres.";
+        if (nome.length > 50) return "O nome deve ter no máximo 50 caracteres.";
+        return "";
+    }
+
+    function validarEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!regex.test(email)) return "Digite um email válido (ex: usuario@gmail.com).";
+        return "";
+    }
+
+    function validarSenha(senha) {
+        if (senha.length < 5) return "A senha deve ter no mínimo 5 caracteres.";
+        if (senha.length > 10) return "A senha deve ter no máximo 10 caracteres.";
+        return "";
+    }
+
+    function validarConfSenha(conf) {
+        if (confSenha !== senha_cripto) return "As senhas não coincidem.";
+        return "";
+    }
+
+
     // Limpar campos
     function resetForm() {
         setNome("");
@@ -30,26 +64,40 @@ export default function FormMobile() {
         setSenha("");
         setConfSenha("");
         setTipoUser("");
+
+        setErrorNome("");
+        setErrorEmail("");
+        setErrorSenha("");
+        setErrorConfSenha("");
     }
 
     async function cadastrar() {
-        // validação primeiro!
+
+        // Validar todos os campos novamente antes do envio
+        const nomeErro = validarNome(nome_usuario);
+        const emailErro = validarEmail(email_usuario);
+        const senhaErro = validarSenha(senha_cripto);
+        const confErro = validarConfSenha(confSenha);
+        
+        setErrorNome(nomeErro);
+        setErrorEmail(emailErro);
+        setErrorSenha(senhaErro);
+        setErrorConfSenha(confErro);
+
+        // Checagem de preenchimento obrigatório e erros de validação
         if (
-            !nome_usuario ||
-            !email_usuario ||
-            !senha_cripto ||
-            !confSenha ||
-            !tipo_usuario
+            !nome_usuario || !email_usuario || !senha_cripto || !confSenha || !tipo_usuario
         ) {
-            alert("Preencha todos os campos!");
+            toast.error("Preencha todos os campos obrigatórios!");
             return;
         }
 
-        if (senha_cripto !== confSenha) {
-            alert("As senhas não coincidem!");
+        if (nomeErro || emailErro || senhaErro || confErro) {
+            toast.error("Corrija os erros de validação antes de enviar.");
             return;
         }
-
+        
+        // Se a validação passou, tenta cadastrar
         try {
             const dados = {
                 nome_usuario,
@@ -61,10 +109,10 @@ export default function FormMobile() {
             console.log("Enviando dados:", dados);
             await axios.post("/api/usuarios", dados);
             resetForm();
-            alert("Usuário cadastrado com sucesso!");
+            toast.success("Usuário cadastrado com sucesso!");
         } catch (err) {
             console.error(err);
-            alert("Erro ao enviar formulário");
+            toast.error("Erro ao enviar formulário");
         }
     }
 
@@ -84,22 +132,63 @@ export default function FormMobile() {
                 </div>
                 {/* div das inputs*/}
 
-                <div className="w-full h-full flex flex-col items-center justify-center space-y-3 mt-12">
-                    <Input
-                        placeholder="Nome"
-                        value={nome_usuario}
-                        onChange={(e) => setNome(e.target.value)}
-                        className="border-2 border-[#004A8D] w-[90vw] h-[35px] text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
+                <div className="w-full h-full flex flex-col items-center justify-center space-y-1 mt-12">
+                    
+                    {/* Input Nome */}
+                    <div className="w-[90vw] flex flex-col">
+                        <Input
+                            placeholder="Nome"
+                            value={nome_usuario}
+                            onChange={(e) => {
+                                setNome(e.target.value);
+                                setErrorNome(validarNome(e.target.value));
+                            }}
+                            className={`border-2 ${errorNome ? 'border-red-500' : 'border-[#004A8D]'} w-full h-[35px] text-sm text-[#121212] font-semibold dark:text-white rounded-xl shadow-sm transition-all duration-300`}
+                            aria-invalid={errorNome ? "true" : "false"}
+                            aria-describedby="error-mobile-nome"
+                        />
+                        <div className="h-6 w-full"> 
+                            {errorNome && (
+                                <p 
+                                    id="error-mobile-nome"
+                                    role="alert"
+                                    className="text-red-500 text-xs font-semibold mt-1 flex items-center space-x-1"
+                                >
+                                    <MdError className="w-3 h-3 min-w-3 min-h-3" /> 
+                                    <span>{errorNome}</span>
+                                </p>
+                            )}
+                        </div>
+                    </div>
 
-                    />
-                    <Input
-                        placeholder="Email"
-                        value={email_usuario}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="border-2 border-[#004A8D] w-[90vw] h-[35px] text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
+                    {/* Input Email */}
+                    <div className="w-[90vw] flex flex-col">
+                        <Input
+                            placeholder="Email"
+                            value={email_usuario}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setErrorEmail(validarEmail(e.target.value));
+                            }}
+                            className={`border-2 ${errorEmail ? 'border-red-500' : 'border-[#004A8D]'} w-full h-[35px] text-sm text-[#121212] font-semibold dark:text-white rounded-xl shadow-sm transition-all duration-300`}
+                            aria-invalid={errorEmail ? "true" : "false"}
+                            aria-describedby="error-mobile-email"
+                        />
+                        <div className="h-6 w-full">
+                            {errorEmail && (
+                                <p 
+                                    id="error-mobile-email"
+                                    role="alert"
+                                    className="text-red-500 text-xs font-semibold mt-1 flex items-center space-x-1"
+                                >
+                                    <MdError className="w-3 h-3 min-w-3 min-h-3" /> 
+                                    <span>{errorEmail}</span>
+                                </p>
+                            )}
+                        </div>
+                    </div>
 
-                    />
-
+                    {/* Select Tipo de Usuário (Mantido) */}
                     <Select value={tipo_usuario} onValueChange={setTipoUser}>
                         <SelectTrigger className="w-[90vw] h-[35px] border-2 border-[#004A8D] text-sm font-semibold rounded-xl">
                             <SelectValue
@@ -125,24 +214,66 @@ export default function FormMobile() {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
+                    
+                    {/* Adicionado espaçamento extra após o Select para o próximo campo */}
+                    <div className="h-6 w-full"></div> 
 
-                    <Input
-                        placeholder="Senha"
-                        type="password"
-                        value={senha_cripto}
-                        onChange={(e) => setSenha(e.target.value)}
-                        className="border-2 border-[#004A8D] w-[90vw] h-[35px] text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
+                    {/* Input Senha */}
+                    <div className="w-[90vw] flex flex-col">
+                        <Input
+                            placeholder="Senha"
+                            type="password"
+                            value={senha_cripto}
+                            onChange={(e) => {
+                                setSenha(e.target.value);
+                                setErrorSenha(validarSenha(e.target.value));
+                            }}
+                            className={`border-2 ${errorSenha ? 'border-red-500' : 'border-[#004A8D]'} w-full h-[35px] text-sm text-[#121212] font-semibold dark:text-white rounded-xl shadow-sm transition-all duration-300`}
+                            aria-invalid={errorSenha ? "true" : "false"}
+                            aria-describedby="error-mobile-senha"
+                        />
+                        <div className="h-6 w-full">
+                            {errorSenha && (
+                                <p 
+                                    id="error-mobile-senha"
+                                    role="alert"
+                                    className="text-red-500 text-xs font-semibold mt-1 flex items-center space-x-1"
+                                >
+                                    <MdError className="w-3 h-3 min-w-3 min-h-3" /> 
+                                    <span>{errorSenha}</span>
+                                </p>
+                            )}
+                        </div>
+                    </div>
 
-                    />
+                    {/* Input Confirmar Senha */}
+                    <div className="w-[90vw] flex flex-col">
+                        <Input
+                            placeholder="Confirmar senha"
+                            type="password"
+                            value={confSenha}
+                            onChange={(e) => {
+                                setConfSenha(e.target.value);
+                                setErrorConfSenha(validarConfSenha(e.target.value));
+                            }}
+                            className={`border-2 ${errorConfSenha ? 'border-red-500' : 'border-[#004A8D]'} w-full h-[35px] text-sm text-[#121212] font-semibold dark:text-white rounded-xl shadow-sm transition-all duration-300`}
+                            aria-invalid={errorConfSenha ? "true" : "false"}
+                            aria-describedby="error-mobile-confsenha"
+                        />
+                        <div className="h-4 w-full">
+                            {errorConfSenha && (
+                                <p 
+                                    id="error-mobile-confsenha"
+                                    role="alert"
+                                    className="text-red-500 text-xs font-semibold mt-1 flex items-center space-x-1"
+                                >
+                                    <MdError className="w-3 h-3 min-w-3 min-h-3" /> 
+                                    <span>{errorConfSenha}</span>
+                                </p>
+                            )}
+                        </div>
+                    </div>
 
-                    <Input
-                        placeholder="Confirmar senha"
-                        type="password"
-                        value={confSenha}
-                        onChange={(e) => setConfSenha(e.target.value)}
-                        className="border-2 border-[#004A8D] w-[90vw] h-[35px] text-sm text-[#121212] font-semibold dark:text-white dark:border-[#004A8D] rounded-xl shadow-sm transition-all duration-300"
-
-                    />
 
                     {/* divisória do botão */}
                     <div className="w-full h-24 space-y-2 mt-2">
