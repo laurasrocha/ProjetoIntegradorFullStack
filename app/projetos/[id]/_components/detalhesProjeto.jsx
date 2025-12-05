@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import GaleriaAnexos from "./galeriaAnexos";
 import Header from "@/app/_components/header";
@@ -10,6 +10,23 @@ import formatarDataParaBrasileiro from "@/lib/dataBrasileira";
 
 export default function DetalhesProjeto({ projeto }) {
   const [open, setOpen] = useState(false);
+  const [arquivos, setArquivos] = useState([]);
+
+  // Busca arquivos do projeto via API
+  useEffect(() => {
+    async function fetchArquivos() {
+      try {
+        const res = await fetch(`/api/projetos/${projeto.id}/arquivos`);
+        if (!res.ok) throw new Error("Erro ao buscar arquivos");
+        const data = await res.json();
+        setArquivos(data || []);
+      } catch (err) {
+        console.error("Erro ao buscar arquivos:", err);
+      }
+    }
+
+    fetchArquivos();
+  }, [projeto.id]);
 
   return (
     <div className="w-screen gap-5 flex flex-col justify-center items-center">
@@ -40,9 +57,7 @@ export default function DetalhesProjeto({ projeto }) {
           {formatarComCasas(projeto.id, 4)}
         </p>
 
-        <h2 className="text-2xl font-bold mb-4">
-          {projeto.nome_projeto}
-        </h2>
+        <h2 className="text-2xl font-bold mb-4">{projeto.nome_projeto}</h2>
 
         <div className="space-y-2 text-sm">
           <p>
@@ -51,8 +66,7 @@ export default function DetalhesProjeto({ projeto }) {
           </p>
 
           <p>
-            <span className="font-medium">Turma:</span>{" "}
-            {projeto.turma_projeto}
+            <span className="font-medium">Turma:</span> {projeto.turma_projeto}
           </p>
 
           <p>
@@ -66,13 +80,13 @@ export default function DetalhesProjeto({ projeto }) {
           </p>
 
           <p>
-            <span className="font-medium">Status:</span>{" "}
-            {projeto.status_projeto}
+            <span className="font-medium">Status:</span> {projeto.status_projeto}
           </p>
 
           <p>
             <span className="font-medium">Docente:</span>{" "}
-            {formatarComCasas(projeto.usuarioId, 3)} - {projeto.usuario?.nome_usuario}
+            {formatarComCasas(projeto.usuarioId, 3)} -{" "}
+            {projeto.usuario?.nome_usuario}
           </p>
 
           <button
@@ -84,9 +98,9 @@ export default function DetalhesProjeto({ projeto }) {
         </div>
       </div>
 
+      {/* Galeria de anexos */}
       <GaleriaAnexos
-        // projetoId={projeto.id}
-        fotos={projeto.fotos}
+        arquivos={arquivos} // <- passa arquivos buscados do banco
         open={open}
         onClose={() => setOpen(false)}
       />
