@@ -69,3 +69,21 @@ export async function POST(req, { params }) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+//buscando fotos para a galeria de anexos
+// GET para retornar os arquivos do projeto
+export async function GET(req, { params }) {
+  try {
+    const projetoId = Number(params.id);
+
+    const arquivos = await prisma.projetoArquivo.findMany({
+      where: { projetoId },
+      select: { id: true, url: true, tipo: true },
+    });
+
+    return NextResponse.json(arquivos, { status: 200 });
+  } catch (error) {
+    console.error("Erro ao buscar arquivos:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
