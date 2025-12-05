@@ -24,6 +24,14 @@ export async function POST(req) {
       return NextResponse.json({ error: "Senha incorreta" }, { status: 401 });
     }
 
+    // Preparar dados do usuário para enviar ao front
+    const usuarioData = {
+      id: usuario.id,
+      nome: usuario.nome_usuario, // <- nome real do usuário
+      tipo_usuario: usuario.tipo_usuario,
+      email: usuario.email_usuario
+    };
+
     // Gerar JWT
     const token = jwt.sign(
       { id: usuario.id, tipo: usuario.tipo_usuario },
@@ -32,7 +40,7 @@ export async function POST(req) {
     );
 
     // Retornar resposta com cookie
-    const response = NextResponse.json({ message: "Login realizado!", usuario });
+    const response = NextResponse.json({ message: "Login realizado!", usuario: usuarioData });
     response.cookies.set({
       name: "auth_token",
       value: token,
@@ -44,6 +52,7 @@ export async function POST(req) {
     });
 
     return response;
+
   } catch (err) {
     console.error("ERRO LOGIN:", err);
     return NextResponse.json({ error: "Erro interno no login" }, { status: 500 });
