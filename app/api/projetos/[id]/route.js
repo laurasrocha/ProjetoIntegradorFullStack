@@ -16,6 +16,9 @@ export async function GET(request, context) {
 
     const projeto = await prisma.projetos.findUnique({
       where: { id: projetoId },
+      include: {
+        projetos: true, // <-- traz todos os arquivos anexados
+      },
     });
 
     if (!projeto) {
@@ -70,11 +73,11 @@ export async function PUT(req, context) {
         // 🔴 3. Criar novos registros de arquivos (se houver)
         projetos: projetos && projetos.length > 0
           ? {
-              create: projetos.map(item => ({
-                url: item.url,
-                tipo: item.tipo
-              }))
-            }
+            create: projetos.map(item => ({
+              url: item.url,
+              tipo: item.tipo
+            }))
+          }
           : undefined
       },
       include: {
