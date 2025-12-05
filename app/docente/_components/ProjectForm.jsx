@@ -10,24 +10,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-
 import { createClient } from "@supabase/supabase-js";
 
 // URL do backend
 const URL_DOMINIO = process.env.NEXT_PUBLIC_URL_DOMINIO;
-
-function SimpleButton({ children, className = "", ...props }) {
-  return (
-    <button
-      className={`w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
-      duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
-      active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
 
 export function ProjectForm({ buscarProjetos }) {
   // Controle do formulário
@@ -93,70 +79,74 @@ export function ProjectForm({ buscarProjetos }) {
   );
 
   const handleSubmit = async () => {
-  if (!nome || !membros || !data) {
-    return toast.error("Preencha os campos obrigatórios.");
-  }
-
-  try {
-    let urlsArquivos = [];
-
-    // 🔵 2. Fazer upload dos arquivos no Supabase
-    for (const file of arquivos) {
-      const extensao = file.name.split(".").pop();
-      const nomeArquivo = `projetos/${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(2)}.${extensao}`;
-
-      // Upload
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("projetos")
-        .upload(nomeArquivo, file);
-
-      if (uploadError) {
-        console.error(uploadError);
-        toast.error("Erro ao enviar arquivo para o Supabase.");
-        continue;
-      }
-
-      // Gerar URL pública
-      const { data: urlPublica } = supabase.storage
-        .from("projetos")
-        .getPublicUrl(nomeArquivo);
-
-      urlsArquivos.push(urlPublica.publicUrl);
+    if (!nome || !membros || !data) {
+      return toast.error("Preencha os campos obrigatórios.");
     }
 
-    // 🔵 3. Criar o projeto normalmente no backend
-    const res = await axios.post(`${URL_DOMINIO}/projetos`, {
-      nome_projeto: nome,
-      descricao,
-      membros_projeto: membros,
-      turma_projeto: turma,
-      data_apresentacao: data,
-      convidados: convidados === "sim",
-      detalhesConvidados:
-        convidados === "sim" ? detalhesConvidados : "",
-      observacoes: temObservacao ? observacaoTexto : "",
-      usuarioId: 1,
-      projetos: urlsArquivos, // 🔴 ALTEREI AQUI: Envia como ARRAY, não como string
-    });
+    try {
+      let urlsArquivos = [];
 
-    toast.success(`Projeto "${nome}" criado com sucesso.`);
+      // 🔵 2. Fazer upload dos arquivos no Supabase
+      for (const file of arquivos) {
+        const extensao = file.name.split(".").pop();
+        const nomeArquivo = `projetos/${Date.now()}-${Math.random()
+          .toString(36)
+          .substring(2)}.${extensao}`;
 
-    resetForm();
-    setOpen(false);
-    buscarProjetos();
-  } catch (err) {
-    console.error(err);
-    toast.error("Erro ao criar projeto.");
-  }
-};
+        // Upload
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("projetos")
+          .upload(nomeArquivo, file);
+
+        if (uploadError) {
+          console.error(uploadError);
+          toast.error("Erro ao enviar arquivo para o Supabase.");
+          continue;
+        }
+
+        // Gerar URL pública
+        const { data: urlPublica } = supabase.storage
+          .from("projetos")
+          .getPublicUrl(nomeArquivo);
+
+        urlsArquivos.push(urlPublica.publicUrl);
+      }
+
+      // 🔵 3. Criar o projeto normalmente no backend
+      const res = await axios.post(`${URL_DOMINIO}/projetos`, {
+        nome_projeto: nome,
+        descricao,
+        membros_projeto: membros,
+        turma_projeto: turma,
+        data_apresentacao: data,
+        convidados: convidados === "sim",
+        detalhesConvidados:
+          convidados === "sim" ? detalhesConvidados : "",
+        observacoes: temObservacao ? observacaoTexto : "",
+        usuarioId: 1,
+        projetos: urlsArquivos, // 🔴 ALTEREI AQUI: Envia como ARRAY, não como string
+      });
+
+      toast.success(`Projeto "${nome}" criado com sucesso.`);
+
+      resetForm();
+      setOpen(false);
+      buscarProjetos();
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao criar projeto.");
+    }
+  };
 
   return (
     <div className="text-center space-x-4">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <SimpleButton>Novo Projeto</SimpleButton>
+          <button
+            className="w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
+                duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
+                active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100"
+          >Novo Projeto</button>
         </SheetTrigger>
         <SheetContent className="bg-white p-0 dark:bg-gray-800 overflow-y-auto">
           <SheetHeader className="p-4 border-b">
@@ -316,9 +306,14 @@ export function ProjectForm({ buscarProjetos }) {
               />
 
               {/* Botão que aciona o input invisível */}
-              <SimpleButton onClick={() => fileInputRef.current?.click()}>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
+                duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
+                active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100"
+              >
                 Anexar fotos ao projeto
-              </SimpleButton>
+              </button>
 
               {/* Lista de arquivos selecionados */}
               {arquivos.length > 0 && (
@@ -345,9 +340,12 @@ export function ProjectForm({ buscarProjetos }) {
                 </div>
               )}
 
-              <SimpleButton onClick={handleSubmit}>
+              <button onClick={handleSubmit}
+                className="w-[200px] h-[35px] sm:h-[40px] cursor-pointer text-white py-2 sm:py-3 rounded-2xl bg-[#004A8D] shadow-md text-xs font-semibold uppercase transition-all
+                 duration-500 ease-in-out hover:tracking-wide hover:bg-orange-400 hover:text-white hover:shadow-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFFFFF]
+                active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100">
                 Concluir cadastro
-              </SimpleButton>
+              </button>
             </div>
           </div>
         </SheetContent>

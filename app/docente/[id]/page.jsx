@@ -1,13 +1,6 @@
 // page.jsx
-
 import Header from "@/app/_components/header";
-import formatarComCasas from "@/lib/casasdecimais";
-import BtnExcluir from "@/app/projetos/[id]/_components/btnExcluir";
-import formatarDataParaBrasileiro from "@/lib/dataBrasileira";
 import Link from "next/link";
-import CloseButton from "@/app/docente/[id]/_components/CloseButton";
-import BtnEditar from "@/app/docente/[id]/_components/btnEditar";
-import ProjectsGrid from "@/app/supervisor/_components/ProjectsGrid";
 import { ProjetoDetalheCard } from "./_components/card"; 
 
 

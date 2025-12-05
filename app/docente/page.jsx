@@ -1,10 +1,6 @@
 "use client";
 import Header from "../_components/header";
 import { ProjectForm } from "@/app/docente/_components/ProjectForm";
-import { SearchAndSort } from "@/app/docente/_components/SearchAndSort";
-import { ProjectsGrid } from "@/app/docente/_components/ProjectsGrid";
-import { ProjectDetailsModal } from "@/app/docente/_components/ProjectDetailsModal";
-import { EditProjectModal } from "@/app/docente/_components/EditProjectModal";
 import Link from "next/link";
 import ThemeSwitch from "../_components/themeSwitch";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";

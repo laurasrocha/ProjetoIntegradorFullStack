@@ -1,7 +1,5 @@
 //PhotoGalleryModal.jsx
-
 "use client";
-import { X } from "lucide-react"; 
 
 export function PhotoGalleryModal({ fotos, onClose }) {
   return (
