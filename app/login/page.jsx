@@ -14,22 +14,17 @@ export default function Login() {
   const [user, setUser] = useState("");
   const [senha, setSenha] = useState("");
   const [supervisor, setSupervisor] = useState(false);
-
-  // Estados de erro
   const [errorUser, setErrorUser] = useState("");
   const [errorSenha, setErrorSenha] = useState("");
 
   const router = useRouter();
 
-  // Alternar usuário (professor/supervisor)
   const btnAlternar = (checked) => {
     setSupervisor(checked);
     toast.success(checked ? "Olá, Supervisor(a)" : "Olá, Docente");
   };
 
-  // -----------------------
   // 🔍 VALIDAÇÕES
-  // -----------------------
   function validarEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!regex.test(email)) return "Digite um email válido.";
@@ -42,9 +37,6 @@ export default function Login() {
     return "";
   }
 
-  // -----------------------
-  // 🚀 LOGIN
-  // -----------------------
   const handleLogin = async () => {
     const userErro = validarEmail(user);
     const senhaErro = validarSenha(senha);
@@ -77,6 +69,10 @@ export default function Login() {
       }
 
       toast.success("Login realizado!");
+      
+      localStorage.setItem("usuarioId", data.usuario.id);
+      localStorage.setItem("usuarioNome", data.usuario.nome);
+
 
       if (!data.usuario) {
         toast.error("Erro interno: usuário não encontrado.");
@@ -96,9 +92,6 @@ export default function Login() {
     }
   };
 
-  // -----------------------
-  // 🧱 LAYOUT
-  // -----------------------
   return (
     <div className="w-screen h-screen flex flex-col">
       <Header
@@ -181,7 +174,7 @@ export default function Login() {
 
             {/* Campos */}
             <div className="flex flex-col items-center space-y-2 w-full mt-6">
-              
+
               {/* Email */}
               <div className="flex flex-col w-[80vw] sm:w-[350px]">
                 <Input
@@ -191,9 +184,8 @@ export default function Login() {
                     setUser(e.target.value);
                     setErrorUser(validarEmail(e.target.value));
                   }}
-                  className={`border-2 ${
-                    errorUser ? "border-red-500" : "border-[#004A8D]"
-                  } w-full h-[35px] sm:h-[43px] text-xs sm:text-sm font-semibold rounded-xl`}
+                  className={`border-2 ${errorUser ? "border-red-500" : "border-[#004A8D]"
+                    } w-full h-[35px] sm:h-[43px] text-xs sm:text-sm font-semibold rounded-xl`}
                 />
                 {errorUser && (
                   <p className="text-red-500 text-xs flex items-center mt-1 font-semibold">
@@ -212,9 +204,8 @@ export default function Login() {
                     setSenha(e.target.value);
                     setErrorSenha(validarSenha(e.target.value));
                   }}
-                  className={`border-2 ${
-                    errorSenha ? "border-red-500" : "border-[#004A8D]"
-                  } w-full h-[35px] sm:h-[43px] text-xs sm:text-sm font-semibold rounded-xl`}
+                  className={`border-2 ${errorSenha ? "border-red-500" : "border-[#004A8D]"
+                    } w-full h-[35px] sm:h-[43px] text-xs sm:text-sm font-semibold rounded-xl`}
                 />
                 {errorSenha && (
                   <p className="text-red-500 text-xs flex items-center mt-1 font-semibold">

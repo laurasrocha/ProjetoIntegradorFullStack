@@ -7,7 +7,8 @@ import { FiImage, FiTrash2, FiEdit } from "react-icons/fi";
 import PhotoGalleryModal from "./_idcomponentes/PhotoGalleryModal";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { EditProjectModal } from "../_components/EditProjectModal";
+import { EditProjectModal } from "./_idcomponentes/EditProjectModal";
+import formatarDataParaBrasileiro from "@/lib/dataBrasileira";
 import { useRouter } from "next/navigation";
 
 const URL_VOLTAR = "/docente";
@@ -148,6 +149,43 @@ export default function ProjetoDetalhe({ params }) {
               <strong>Docente:</strong> {projeto.usuario.nome_usuario}
             </p>
           )}
+
+          {projeto.data_apresentacao && (
+            <p className="text-gray-700 dark:text-gray-300 text-sm mt-2">
+              <strong>Data de apresentação:</strong>{" "}
+              {formatarDataParaBrasileiro(projeto.data_apresentacao)}
+            </p>
+          )}
+
+          <p className="text-gray-700 dark:text-gray-300 text-sm mt-2">
+            <strong>Convidados:</strong> {projeto.convidados ? "Sim" : "Não"}
+          </p>
+
+          {projeto.detalhesConvidados && (
+            <p className="text-gray-700 dark:text-gray-300 text-sm mt-2">
+              <strong>Detalhes dos convidados:</strong> {projeto.detalhesConvidados}
+            </p>
+          )}
+
+          {projeto.status_projeto && (
+            <p className="text-gray-700 dark:text-gray-300 text-sm mt-2">
+              <strong>Status:</strong> {projeto.status_projeto}
+            </p>
+          )}
+
+          {projeto.data_criacao && (
+            <p className="text-gray-700 dark:text-gray-300 text-sm mt-2">
+              <strong>Criado em:</strong> {new Date(projeto.data_criacao).toLocaleDateString()}
+            </p>
+          )}
+
+          <div className="mt-2 p-4 bg-gray-200 dark:bg-gray-700 rounded">
+            <strong>Feedback do supervisor:</strong>
+            <p>
+              {projeto.feedback_supervisor || "Ainda não há feedback para este projeto."}
+            </p>
+          </div>
+
 
           {/* BOTÃO VER ARQUIVOS */}
           {arquivos.length > 0 && (

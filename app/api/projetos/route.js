@@ -39,8 +39,6 @@ export async function POST(req) {
       detalhesConvidados,
       observacoes,
       usuarioId,
-      docente_id,    // 🔹 NOVO
-      docente_nome,  // 🔹 NOVO
       projetos // array de URLs
     } = body;
 
@@ -55,8 +53,6 @@ export async function POST(req) {
         detalhesConvidados,
         observacoes,
         usuarioId: usuarioId || null,
-        docente_id,    // 🔹 ADICIONADO
-        docente_nome,  // 🔹 ADICIONADO
 
         projetos: projetos && projetos.length > 0
           ? {
@@ -68,7 +64,8 @@ export async function POST(req) {
           : undefined
       },
       include: {
-        projetos: true
+        projetos: true,
+        usuario: true
       }
     });
 

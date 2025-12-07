@@ -27,7 +27,7 @@ export async function POST(req) {
     // Preparar dados do usuário para enviar ao front
     const usuarioData = {
       id: usuario.id,
-      nome: usuario.nome_usuario, // <- nome real do usuário
+      nome: usuario.nome_usuario,
       tipo_usuario: usuario.tipo_usuario,
       email: usuario.email_usuario
     };

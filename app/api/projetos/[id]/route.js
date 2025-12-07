@@ -60,17 +60,19 @@ export async function PUT(req, context) {
       delete dadosProjeto.status;
     }
 
-    // 🔴 1. Deletar arquivos antigos
-    await prisma.projetoArquivo.deleteMany({
-      where: { projetoId: projetoId }
-    });
+    // 1. Deletar arquivos antigos
+    if (projetos) {
+      await prisma.projetoArquivo.deleteMany({
+        where: { projetoId: projetoId }
+      });
+    }
 
-    // 🔴 2. Atualizar projeto principal
+    // 2. Atualizar projeto principal
     const atualizado = await prisma.projetos.update({
       where: { id: projetoId },
       data: {
         ...dadosProjeto,
-        // 🔴 3. Criar novos registros de arquivos (se houver)
+        // 3. Criar novos registros de arquivos (se houver)
         projetos: projetos && projetos.length > 0
           ? {
             create: projetos.map(item => ({
@@ -81,7 +83,7 @@ export async function PUT(req, context) {
           : undefined
       },
       include: {
-        projetos: true // 🔴 Incluir arquivos na resposta
+        projetos: true // Incluir arquivos na resposta
       }
     });
 

@@ -17,19 +17,22 @@ export default function Page() {
   const [projetos, setProjetos] = useState([]);
   const [busca, setBusca] = useState("");
   const [ordenacao, setOrdenacao] = useState("az");
-  const [projetoSelecionado, setProjetoSelecionado] = useState(null);
-  const [projetoEditando, setProjetoEditando] = useState(null);
   const [usuarioNome, setUsuarioNome] = useState("");
 
   const buscarProjetos = async () => {
     try {
-      const res = await axios.get(`${URL_DOMINIO}/projetos`);
-      //console.log(res);
-      setProjetos(res.data); // Axios retorna o JSON em res.data
+      const usuarioId = localStorage.getItem("usuarioId");
+
+      const res = await axios.get(
+        `${URL_DOMINIO}/projetos/docente?usuarioId=${usuarioId}`
+      );
+
+      setProjetos(res.data);
     } catch (err) {
       console.error("Erro ao buscar projetos:", err);
     }
   };
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -38,31 +41,10 @@ export default function Page() {
     }
   }, []);
 
-
-
   useEffect(() => {
     buscarProjetos();
   }, []);
 
-  const atualizarProjeto = async (projetoAtualizado) => {
-    try {
-      // Chamada à API para atualizar
-      const res = await axios.put(`${URL_DOMINIO}/projetos`, projetoAtualizado);
-      toast.success(`Projeto: ${projetoAtualizado.nome_projeto} atualizado.`);
-
-      // Atualiza o estado com o projeto modificado
-      setProjetos((prev) =>
-        prev.map((p) => (p.id === res.data.id ? res.data : p))
-      );
-
-      console.log("Projeto atualizado com sucesso!");
-    } catch (err) {
-      console.error("Erro ao atualizar projeto:", err);
-      toast.error(
-        `Projeto ${projetoAtualizado.nome_projeto} não foi atualizado.`
-      );
-    }
-  };
 
   const projetosFiltrados = projetos
     .filter((projeto) => {
@@ -129,7 +111,7 @@ export default function Page() {
             active:tracking-wide active:bg-gray-300 active:text-white active:shadow-none active:translate-y-2 active:duration-100 flex items-center justify-center"
           >
             <HiMiniArrowRightStartOnRectangle className="w-[35px]" size={18} />
-           SAIR
+            SAIR
           </Link>
         }
       />
@@ -137,7 +119,8 @@ export default function Page() {
       <div className="w-screen h-screen  bg-slate-100 dark:bg-gray-900">
         <div className="w-full h-[40px] flex justify-between p-4">
           <h1 className="text-xs sm:text-sm font-semibold">
-            Olá, docente {usuarioNome || "carregando..."}
+            <p>Olá, docente {usuarioNome || "..."}</p>
+
           </h1>
 
           {/* Botão DarkTheme */}

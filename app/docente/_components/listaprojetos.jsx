@@ -30,7 +30,7 @@ export default function ListaProjetos({ projetos }) {
           // Seleciona imagem de capa (se não for PDF)
           const fotoCapa =
             primeiroArquivo &&
-            primeiroArquivo.tipo !== "pdf"
+              primeiroArquivo.tipo !== "pdf"
               ? primeiroArquivo.url
               : null;
 
@@ -42,10 +42,7 @@ export default function ListaProjetos({ projetos }) {
             >
               <div className="w-full flex items-center justify-center">
                 <Card className="w-[90vw] sm:w-[400px] h-full shadow-xl hover:shadow-2xl hover:tracking-wide sm:cursor-pointer flex flex-col items-center bg-slate-100 dark:bg-gray-800 transition-all duration-300 hover:scale-105 overflow-hidden">
-
-                  {/* ============================
-                      IMAGEM DE CAPA
-                  ============================ */}
+                  {/* IMAGEM DE CAPA */}
                   <div className="w-full h-[200px] relative bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                     {fotoCapa ? (
                       <Image
@@ -72,7 +69,7 @@ export default function ListaProjetos({ projetos }) {
 
                   <CardHeader className="w-full text-center flex-grow">
                     <CardTitle className="text-sm sm:text-lg">
-                      {item.nome_projeto}{" "}
+                      {item.nome_projeto}
                       <span className="text-orange-400">
                         (Código: {formatarComCasas(item.id, 4)})
                       </span>
@@ -80,6 +77,10 @@ export default function ListaProjetos({ projetos }) {
                     <CardDescription className="text-xs sm:text-sm line-clamp-2">
                       Desenvolvido por: {item.membros_projeto}
                     </CardDescription>
+                    <CardDescription className="text-xs sm:text-sm line-clamp-2">
+                      Docente: {item.usuario?.nome_usuario || "Sem docente"}
+                    </CardDescription>
+
                   </CardHeader>
 
                 </Card>
