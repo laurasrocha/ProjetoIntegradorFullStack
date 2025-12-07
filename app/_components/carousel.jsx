@@ -15,13 +15,12 @@ import { useRef } from 'react'
 export default function CarouselFunction() {
 
     //AUTOPLAY CAROUSEL
-     const autoplay = useRef(
+    const autoplay = useRef(
         Autoplay({ delay: 3000, //tempo entre slides
-             stopOnInteraction: false, //stopON -> faz o autoplay continuar mesmo se o usuário interagir
-             stopOnMouseEnter: true     // PAUSA quando mouse entra no carousel
+            stopOnInteraction: false, //stopON -> faz o autoplay continuar mesmo se o usuário interagir
+            stopOnMouseEnter: true     // PAUSA quando mouse entra no carousel
             }) 
     )
-
 
 
     const cards = [
@@ -34,25 +33,39 @@ export default function CarouselFunction() {
  
     return (
         <div className='w-full flex justify-center items-center bg-slate-100 dark:bg-gray-900'>
-            <Carousel plugins={[autoplay.current]} className="w-[70vw] sm:w-[80vw]">
+            <Carousel 
+                plugins={[autoplay.current]} 
+                // O carrossel irá ocupar 90vw (mobile) ou 80vw (desktop)
+                className="w-[90vw] sm:w-[80vw]"
+            >
                 <CarouselContent >
                     {cards.map((card, index) => (
-                        <CarouselItem key={index} className="h-[200px] sm:h-[450px]">
+                        <CarouselItem 
+                            key={index} 
+                            // PASSO 1: Mantemos a altura definida pelo contêiner interno.
+                            className="h-full"
+                        >
 
                             <div className="p-1 h-full">
 
                                 <Card className='w-full h-full shadow-sm shadow-[#f29100] p-2'>
-                                    <CardContent className="relative flex items-center justify-center overflow-hidden rounded-xl 
-                                         h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px]"> 
-                                         <Image
+                                    <CardContent 
+                                        // PASSO 2: Ajustamos o Aspect Ratio para mobile.
+                                        // Trocamos 'aspect-video' (16:9) por 'aspect-[3/2]' (3:2).
+                                        // A proporção 3:2 é mais alta (menos larga) que 16:9, dando mais espaço vertical
+                                        // para banners que parecem cortados no celular.
+                                        className="relative flex items-center justify-center overflow-hidden rounded-xl 
+                                        aspect-[3/2] sm:h-[450px] sm:aspect-auto"
+                                    > 
+                                        <Image
                                             src={card.image}
                                             alt={`Slide ${index + 1}`}
                                             fill
                                             quality={100}
                                             priority={index === 0} // primeira imagem carrega em alta primeiro
-                                            className='object-cover rounded-xl'
-                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 600px"
-
+                                            // PASSO 3: Mantemos object-contain para garantir que nenhuma parte do conteúdo seja cortada.
+                                            className='object-contain sm:object-cover rounded-xl' 
+                                            sizes="(max-width: 640px) 90vw, 80vw"
                                         />
 
 
