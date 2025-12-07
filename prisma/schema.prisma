@@ -38,6 +38,7 @@ model projetos {
   convidados         Boolean
   detalhesConvidados String?
   observacoes        String?
+  feedback_supervisor String?
   status_projeto     String?          @default("Pendente")
   updatedAt          DateTime?        @default(now())
   createdAt          DateTime?        @default(now())
