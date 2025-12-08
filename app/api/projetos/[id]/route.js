@@ -18,6 +18,7 @@ export async function GET(request, context) {
       where: { id: projetoId },
       include: {
         projetos: true, // <-- traz todos os arquivos anexados
+        usuario: true,
       },
     });
 
@@ -51,8 +52,18 @@ export async function PUT(req, context) {
       return NextResponse.json({ error: "Nenhum dado enviado" }, { status: 400 });
     }
 
-    // 🔴 SEPARAR os dados do projeto dos arquivos
+    // SEPARAR os dados do projeto dos arquivos
     const { projetos, ...dadosProjeto } = dados;
+
+    // ✅ Remover campos que NÃO podem ser atualizados
+    delete dadosProjeto.id;
+    delete dadosProjeto.UUID;
+    delete dadosProjeto.createdAt;
+    delete dadosProjeto.updatedAt;
+    delete dadosProjeto.usuario;
+    delete dadosProjeto.feedbacks;
+
+    console.log("CHEGOU NO BACK:", dadosProjeto);
 
     // Ajuste de status se necessário
     if (dadosProjeto.status !== undefined) {
