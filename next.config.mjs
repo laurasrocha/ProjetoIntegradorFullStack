@@ -2,6 +2,8 @@ import withPWA from "next-pwa";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  turbopack: {}, // ✅ Adicione ESTA linha
+
   images: {
     remotePatterns: [
       {
@@ -13,8 +15,9 @@ const nextConfig = {
     ],
   },
 };
+
 const isProd = process.env.NODE_ENV === "development" ? false : true;
-// Configuração do PWA
+
 const withPWAConfig = withPWA({
   dest: "public",
   register: true,
