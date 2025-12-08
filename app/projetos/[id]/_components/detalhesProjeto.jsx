@@ -49,13 +49,6 @@ export default function DetalhesProjeto({ projeto }) {
         className="projeto-card-minimal bg-white text-gray-800 border border-gray-200 p-6 rounded-xl w-full max-w-2xl shadow-sm hover:shadow-md transition-shadow
           dark:bg-gray-700 dark:text-gray-100 dark:border-gray-700"
       >
-        <h1 className="text-sm font-medium text-gray-500 mb-2">
-          Código do projeto
-        </h1>
-
-        <p className="text-xl font-semibold mb-6">
-          {formatarComCasas(projeto.id, 4)}
-        </p>
 
         <h2 className="text-2xl font-bold mb-4">{projeto.nome_projeto}</h2>
 
@@ -80,12 +73,7 @@ export default function DetalhesProjeto({ projeto }) {
           </p>
 
           <p>
-            <span className="font-medium">Status:</span> {projeto.status_projeto}
-          </p>
-
-          <p>
             <span className="font-medium">Docente:</span>{" "}
-            {formatarComCasas(projeto.usuarioId, 3)} -{" "}
             {projeto.usuario?.nome_usuario}
           </p>
 
