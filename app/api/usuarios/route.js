@@ -1,7 +1,7 @@
 // app/api/usuarios/route.js
 import { NextResponse } from "next/server";
 import { UsuariosService } from "./usuariosService";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export async function GET() {
   try {
