@@ -13,8 +13,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ThemeMobile from './themeMobile';
 
-
-export default function Header({ btnDesktop, btnMobile, btnPjMobile, btnPjDesktop }) {
+export default function Header({ btnDesktop, btnMobile, btnPjMobile, btnPjDesktop, saudacao }) {
 
     return (
         <div className='flex flex-col w-screen border-b-4 border-[#f29100]'>
@@ -31,12 +30,13 @@ export default function Header({ btnDesktop, btnMobile, btnPjMobile, btnPjDeskto
                     </Link>
 
                     <Sheet>
-                        <SheetTrigger><BsList className="text-[#f29100] sm:hidden" size={32} /></SheetTrigger>
+                        <SheetTrigger>
+                            <BsList className="text-[#f29100] sm:hidden" size={32} />
+                        </SheetTrigger>
                         <SheetContent>
                             <SheetHeader className="flex items-center">
                                 <SheetTitle><ThemeMobile /></SheetTitle>
                                 <SheetDescription>
-
                                     <button>{btnPjMobile}</button>
                                     <button>{btnMobile}</button>
                                 </SheetDescription>
@@ -46,8 +46,19 @@ export default function Header({ btnDesktop, btnMobile, btnPjMobile, btnPjDeskto
                 </div>
 
                 <div className="flex items-center sm:space-x-4">
+
+                    {/* Saudação */}
+                    {saudacao && (
+                        <span className="ml-4 text-white text-sm sm:text-base font-semibold">
+                            {saudacao}
+                        </span>
+                    )}
+
+                    {/* Botões principais */}
                     <button>{btnPjDesktop}</button>
                     <button>{btnDesktop}</button>
+
+                    
                 </div>
                 <div className="hidden sm:block w-[40px]"></div>
             </div>
