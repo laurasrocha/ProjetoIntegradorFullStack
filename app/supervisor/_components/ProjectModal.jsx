@@ -1,11 +1,47 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProjectModal({ project, onClose }) {
   const [feedbackText, setFeedbackText] = useState("");
+  const [feedbacks, setFeedbacks] = useState([]);
 
+  const base = process.env.NEXT_PUBLIC_URL_DOMINIO || "";
+
+  // =============================
+  // BUSCAR FEEDBACKS DO PROJETO
+  // =============================
+  async function carregarFeedbacks() {
+    try {
+      const res = await fetch(`${base}/projetos/${project.id}/feedback`);
+
+      console.log("BASE:", base);
+      console.log("FETCH URL:", `${base}/api/projetos/${project.id}/feedback`);
+
+
+      if (!res.ok) {
+        console.error("Erro ao carregar feedbacks");
+        return;
+      }
+
+      const data = await res.json();
+      setFeedbacks(data);
+    } catch (error) {
+      console.error("Erro ao buscar feedbacks:", error);
+    }
+  }
+
+  // Carrega os feedbacks ao abrir o modal
+  useEffect(() => {
+    if (project?.id) {
+      carregarFeedbacks();
+    }
+  }, [project]);
+
+  // =============================
+  // ENVIAR FEEDBACK
+  // =============================
   async function enviarFeedbackProjeto() {
     if (!feedbackText.trim()) {
       toast.warning("Digite um feedback antes de enviar.");
@@ -13,7 +49,6 @@ export default function ProjectModal({ project, onClose }) {
     }
 
     try {
-      const base = process.env.NEXT_PUBLIC_URL_DOMINIO || "";
       const res = await fetch(`${base}/projetos/${project.id}/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -27,7 +62,9 @@ export default function ProjectModal({ project, onClose }) {
 
       toast.success("Feedback enviado com sucesso!");
       setFeedbackText("");
-      onClose();
+
+      // Atualiza a lista imediatamente
+      await carregarFeedbacks();
 
     } catch (error) {
       console.error(error);
@@ -37,10 +74,14 @@ export default function ProjectModal({ project, onClose }) {
 
   if (!project) return null;
 
+  // =============================
+  // INTERFACE DO MODAL
+  // =============================
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
-      <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto" role="dialog" aria-modal="true">
+      <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
 
+        {/* HEADER */}
         <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
           <h3 className="text-lg font-semibold text-[#004A8D] dark:text-white">
             {project.nome_projeto || project.nome}
@@ -54,7 +95,9 @@ export default function ProjectModal({ project, onClose }) {
           </button>
         </div>
 
+        {/* CONTEÚDO */}
         <div className="p-6 space-y-4 text-gray-700 dark:text-gray-300">
+
           <div>
             <strong>Desenvolvido por:</strong>
             <div>{project.membros_projeto || project.membros || "Não informado"}</div>
@@ -63,6 +106,11 @@ export default function ProjectModal({ project, onClose }) {
           <div>
             <strong>Turma:</strong>
             <div>{project.turma_projeto || "Não informado"}</div>
+          </div>
+
+          <div>
+            <strong>Docente:</strong>
+            <div>{project.usuarioId || "Não informado"}</div>
           </div>
 
           <div>
@@ -85,7 +133,32 @@ export default function ProjectModal({ project, onClose }) {
             </div>
           )}
 
-          {/* FEEDBACK AQUI */}
+          {/* LISTA DE FEEDBACKS */}
+          <div className="mt-8">
+            <h4 className="font-semibold text-[#004A8D] dark:text-white">
+              Feedbacks enviados:
+            </h4>
+
+            {feedbacks.length === 0 && (
+              <p className="text-gray-500 text-sm mt-1">Nenhum feedback enviado ainda.</p>
+            )}
+
+            <div className="space-y-2 mt-2">
+              {feedbacks.map((fb) => (
+                <div
+                  key={fb.id}
+                  className="border dark:border-gray-700 p-2 rounded bg-gray-100 dark:bg-gray-700"
+                >
+                  <p className="text-sm">{fb.mensagem}</p>
+                  <small className="text-xs text-gray-600 dark:text-gray-300">
+                    {new Date(fb.criadoEm).toLocaleString()}
+                  </small>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ÁREA DE ENVIO */}
           <div className="mt-6">
             <h4 className="font-semibold text-[#004A8D] dark:text-white">
               Deixar feedback para este projeto:
@@ -101,14 +174,8 @@ export default function ProjectModal({ project, onClose }) {
 
             <div className="flex gap-3 justify-end mt-4">
               <button
-                onClick={() => { setFeedbackText(""); }}
-                className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700"
-              >
-                Limpar
-              </button>
-              <button
                 onClick={enviarFeedbackProjeto}
-                className="px-4 py-2 rounded-md bg-[#004A8D] text-white"
+                className="px-4 py-2 rounded-2xl bg-[#004A8D] text-white cursor-pointer hover:bg-gray-500"
               >
                 Enviar Feedback
               </button>
@@ -116,10 +183,11 @@ export default function ProjectModal({ project, onClose }) {
           </div>
         </div>
 
+        {/* FOOTER */}
         <div className="flex items-center gap-3 justify-end p-4 border-t dark:border-gray-700">
           <button
             onClick={onClose}
-            className="w-[120px] h-[36px] cursor-pointer text-white font-semibold rounded-2xl bg-gray-700 dark:bg-white dark:text-[#004A8D]"
+            className="w-[120px] h-[36px] cursor-pointer text-white font-semibold rounded-2xl bg-gray-700 hover:bg-amber-500 dark:bg-white dark:hover:bg-gray-400 dark:text-[#004A8D]"
           >
             Fechar
           </button>

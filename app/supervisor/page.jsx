@@ -139,6 +139,10 @@ export default function SupervisorPage() {
           Turma: {project.turma_projeto || project.turma_projeto}
         </span>
 
+        <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+          Docente: {project.usuarioId || project.usuario}
+        </span>
+
         <button
           onClick={() => setSelectedProject(project)}
           className="ml-auto mt-auto text-sm underline text-[#004A8D] hover:text-[#f29100] dark:text-white dark:hover:text-[#f29100] hover:cursor-pointer"
