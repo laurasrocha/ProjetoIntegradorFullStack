@@ -159,7 +159,7 @@ export default function Page() {
           </div>
 
           <div className="w-full sm:h-auto flex flex-col items-center">
-            <h1 className="mt-10 hidden sm:block text-xl font-semibold">
+            <h1 className="hidden sm:block text-xl font-semibold">
               Todos os projetos em andamento
             </h1>
             <ListaProjetos projetos={projetosFiltrados} />

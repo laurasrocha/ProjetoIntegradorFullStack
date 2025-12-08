@@ -17,6 +17,8 @@ export default function ProjetoDetalhe({ params }) {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [openGalery, setOpenGalery] = useState(false);
+  const [feedbacks, setFeedbacks] = useState([]);
+
 
   const resolvedParams = React.use(params);
   const id = resolvedParams.id;
@@ -44,6 +46,27 @@ export default function ProjetoDetalhe({ params }) {
 
     fetchProjeto();
   }, [id]);
+
+  useEffect(() => {
+    async function fetchFeedbacks() {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_URL_DOMINIO}/projetos/${id}/feedback`,
+          { cache: "no-store" }
+        );
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        setFeedbacks(data);
+      } catch (err) {
+        console.error("Erro ao buscar feedbacks:", err);
+      }
+    }
+
+    fetchFeedbacks();
+  }, [id]);
+
 
   const deletarProjeto = async (id) => {
     if (!window.confirm("Deseja realmente excluir este projeto?")) return;
@@ -133,7 +156,7 @@ export default function ProjetoDetalhe({ params }) {
           )}
 
           {projeto.turma_projeto && (
-            <p className="text-gray-700 dark:text-gray-300 text-sm">
+            <p className="text-gray-700 dark:text-gray-300 text-sm mt-2">
               <strong>Turma:</strong> {projeto.turma_projeto}
             </p>
           )}
@@ -180,11 +203,29 @@ export default function ProjetoDetalhe({ params }) {
           )}
 
           <div className="mt-2 p-4 bg-gray-200 dark:bg-gray-700 rounded">
-            <strong>Feedback do supervisor:</strong>
-            <p>
-              {projeto.feedback_supervisor || "Ainda não há feedback para este projeto."}
-            </p>
+            <strong>Feedbacks do supervisor:</strong>
+
+            {feedbacks.length === 0 ? (
+              <p className="text-sm mt-1 text-gray-500">
+                Ainda não há feedback para este projeto.
+              </p>
+            ) : (
+              <div className="space-y-3 mt-2">
+                {feedbacks.map((fb) => (
+                  <div
+                    key={fb.id}
+                    className="bg-white dark:bg-gray-800 p-3 rounded shadow text-sm"
+                  >
+                    <p>{fb.mensagem}</p>
+                    <span className="text-xs text-gray-400 block mt-1">
+                      {new Date(fb.criadoEm).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
 
 
           {/* BOTÃO VER ARQUIVOS */}

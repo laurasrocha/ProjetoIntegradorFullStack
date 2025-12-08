@@ -89,8 +89,8 @@ export default function ListaProjetos({ projetos }) {
           );
         })
       ) : (
-        <p className="text-orange-400 font-semibold text-sm sm:text-xl rounded text-center mt-10 bg-[#004A8D] p-2 border-2 border-orange-400">
-          Nenhum projeto encontrado...
+        <p className="text-black dark:text-white font-semibold text-sm sm:text-xl rounded text-center mt-10">
+          Nenhum projeto encontrado ...
         </p>
       )}
     </div>

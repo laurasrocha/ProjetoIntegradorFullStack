@@ -1,7 +1,10 @@
 "use client";
+import { useState } from "react";
 import { FiX } from "react-icons/fi";
 
 export default function PhotoGalleryModal({ arquivos = [], onClose }) {
+  const [imagemAberta, setImagemAberta] = useState(null);
+
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-2xl p-4 max-h-[85vh] overflow-y-auto relative">
@@ -39,14 +42,28 @@ export default function PhotoGalleryModal({ arquivos = [], onClose }) {
                 <img
                   src={arq.url}
                   alt="Foto"
-                  className="w-full h-40 object-cover"
+                  className="w-full h-40 object-cover cursor-pointer hover:scale-105 transition"
+                  onClick={() => setImagemAberta(arq.url)}
                 />
               )}
             </div>
           ))}
         </div>
-
       </div>
+
+      {/* MODAL DE IMAGEM AMPLIADA */}
+      {imagemAberta && (
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setImagemAberta(null)}
+        >
+          <img
+            src={imagemAberta}
+            alt="Imagem ampliada"
+            className="max-w-full max-h-full rounded-lg shadow-2xl"
+          />
+        </div>
+      )}
     </div>
   );
 }
