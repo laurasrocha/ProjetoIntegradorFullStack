@@ -115,14 +115,6 @@ export default function ProjetoDetalhe({ params }) {
             Voltar
           </Link>
         }
-        btnDesktop={
-          <Link
-            href="/"
-            className="w-[140px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] py-3 rounded-2xl bg-white shadow-md text-xs font-semibold uppercase hover:bg-[#f29100] hover:text-white transition-all"
-          >
-            Sair
-          </Link>
-        }
       />
 
       {/* CARD COMPLETO */}

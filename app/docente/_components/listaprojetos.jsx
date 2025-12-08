@@ -70,9 +70,9 @@ export default function ListaProjetos({ projetos }) {
                   <CardHeader className="w-full text-center flex-grow">
                     <CardTitle className="text-sm sm:text-lg">
                       {item.nome_projeto}
-                      <span className="text-orange-400">
+                      {/* <span className="text-orange-400">
                         (Código: {formatarComCasas(item.id, 4)})
-                      </span>
+                      </span> */}
                     </CardTitle>
                     <CardDescription className="text-xs sm:text-sm line-clamp-2">
                       Desenvolvido por: {item.membros_projeto}
