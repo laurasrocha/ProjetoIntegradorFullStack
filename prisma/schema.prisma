@@ -38,22 +38,29 @@ model projetos {
   convidados         Boolean
   detalhesConvidados String?
   observacoes        String?
-  feedback_supervisor String?
   status_projeto     String?          @default("Pendente")
   updatedAt          DateTime?        @default(now())
   createdAt          DateTime?        @default(now())
   usuarioId          Int?
   usuario            usuarios?        @relation(fields: [usuarioId], references: [id])
   projetos           ProjetoArquivo[]
+  feedbacks          Feedback[]
 }
 
 model ProjetoArquivo {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   url       String
   tipo      String // "image", "pdf", etc
   projetoId Int
+  projeto   projetos @relation(fields: [projetoId], references: [id])
+}
 
-  projeto projetos @relation(fields: [projetoId], references: [id])
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  mensagem  String
+  criadoEm  DateTime @default(now())
+  projetoId Int
+  projeto   projetos @relation(fields: [projetoId], references: [id])
 }
 
 enum TipoUsuario {
