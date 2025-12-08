@@ -3,37 +3,29 @@ import Image from "next/image";
 import Header from "../_components/header";
 import Link from "next/link";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
-// import ProjectsGrid from "./_components/ProjectsGrid";
 import ProjectForm from "./_components/ProjectForm";
-import ProjectModal from "./_components/ProjectModal"; // <-- novo modal externo
+import ProjectModal from "./_components/ProjectModal"; 
 import { useState, useEffect } from "react";
 import ThemeSwitch from "../_components/themeSwitch";
 import { toast } from "sonner";
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function SupervisorPage() {
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  // const [feedback, setFeedback] = useState("");  // removi: agora feedback fica no modal
   const [projects, setProjects] = useState([]);
   const [status, setStatus] = useState("");
-
   const [selectedProject, setSelectedProject] = useState(null);
+  const [usuarioNome, setUsuarioNome] = useState("");
 
   const URL_DOMINIO = process.env.NEXT_PUBLIC_URL_DOMINIO;
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        if (!URL_DOMINIO) {
-          console.warn("NEXT_PUBLIC_URL_DOMINIO indefinido — tentando rota relativa /projetos");
-        }
         const base = URL_DOMINIO || "";
         const res = await fetch(`${base}/projetos`);
         if (!res.ok) {
-          console.warn("Resposta não OK ao buscar projetos:", res.status);
           setProjects([]);
           return;
         }
@@ -48,6 +40,13 @@ export default function SupervisorPage() {
     fetchProjects();
   }, [URL_DOMINIO]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const nome = localStorage.getItem("usuarioNome");
+      if (nome) setUsuarioNome(nome);
+    }
+  }, []);
+
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
       (project.nome_projeto || "")
@@ -57,7 +56,6 @@ export default function SupervisorPage() {
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
-    // Normaliza ambos (filtro e dado do projeto) para evitar problemas de case
     const projectStatus = (project.status_projeto || project.status || "").toString();
     const matchesStatus =
       statusFilter === "" ||
@@ -66,9 +64,6 @@ export default function SupervisorPage() {
     return matchesSearch && matchesStatus;
   });
 
-  // ============================
-  //       FUNÇÃO DE PATCH
-  // ============================
   async function atualizarStatus(id, status) {
     try {
       const base = URL_DOMINIO || "";
@@ -83,7 +78,6 @@ export default function SupervisorPage() {
         return;
       }
 
-      // Atualiza estado local para manter o valor apos reload
       setProjects((prev) =>
         prev.map((p) =>
           p.id === id ? { ...p, status_projeto: status, status } : p
@@ -91,27 +85,23 @@ export default function SupervisorPage() {
       );
 
       toast.success("Status atualizado!");
-
     } catch (error) {
       console.error(error);
       toast.error("Erro de conexão");
     }
   }
 
-  // ============================
-  //   COMPONENTE PROJECT CARD
-  // ============================
   function ProjectCard({ project, setSelectedProject, atualizarStatus }) {
     async function handleChange(e) {
       const newStatus = e.target.value;
-      setStatus(newStatus); //atualiza visualmente local
-      await atualizarStatus(project.id, newStatus); //atualiza backend e estado global
+      setStatus(newStatus);
+      await atualizarStatus(project.id, newStatus);
     }
 
     return (
       <div className="w-[250px] p-4 bg-white dark:bg-gray-800 shadow-md rounded-lg flex flex-col">
         <select
-          value={project.status_projeto || project.status || ""} // usa sempre o valor atualizado do estado global
+          value={project.status_projeto || project.status || ""}
           onChange={handleChange}
           className={`
             w-[105px] h-[35px] border-2 border-[#004A8D] px-1 py-1 ml-auto rounded-xl
@@ -121,10 +111,10 @@ export default function SupervisorPage() {
             ${project.status_projeto === "Recusado" ? "bg-red-500 text-white dark:bg-red-500" : ""}
           `}
         >
-          <option className="bg-gray-700 text-white" value="">Selecione</option>
-          <option className="bg-gray-700 text-white" value="Pendente">Pendente</option>
-          <option className="bg-gray-700 text-white" value="Aprovado">Aprovado</option>
-          <option className="bg-gray-700 text-white" value="Recusado">Recusado</option>
+          <option value="">Selecione</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Aprovado">Aprovado</option>
+          <option value="Recusado">Recusado</option>
         </select>
 
         <h3 className="text-lg w-28 font-semibold text-[#004A8D] dark:text-white">
@@ -132,7 +122,7 @@ export default function SupervisorPage() {
         </h3>
 
         <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-          Desenvolvido por: {project.membros_projeto || project.membros || project.membros_projeto}
+          Desenvolvido por: {project.membros_projeto || project.membros}
         </p>
 
         <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
@@ -140,7 +130,7 @@ export default function SupervisorPage() {
         </span>
 
         <span className="mt-3 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
-          Docente: {project.usuarioId || project.usuario}
+          Docente: {project.usuario?.nome_usuario || "Docente não encontrado"}
         </span>
 
         <button
@@ -153,39 +143,31 @@ export default function SupervisorPage() {
     );
   }
 
-  // ============================
-  //            RETURN
-  // ============================
   return (
     <div className="w-screen min-h-screen bg-slate-100 dark:bg-gray-900">
       <Header
-        btnPjMobile={
-          <Link href="/projetos" className="w-[60vw] h-[40px] mt-8 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase">
-            VER PROJETOS
-          </Link>
-        }
-        btnPjDesktop={
-          <Link href="/projetos" className="w-[160px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] font-semibold py-3 rounded-2xl bg-white shadow-md text-xs tracking-wider uppercase">
-            VER PROJETOS
-          </Link>
-        }
         btnDesktop={
-          <Link href="/" className="w-[140px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] py-3 rounded-2xl bg-white shadow-md text-xs font-semibold uppercase">
+          <Link
+            href="/"
+            className="w-[140px] h-[40px] hidden sm:block cursor-pointer text-[#004A8D] py-3 rounded-2xl bg-white shadow-md text-xs font-semibold uppercase"
+          >
             Sair
           </Link>
         }
         btnMobile={
-          <Link href="/" className="w-[60vw] h-[40px] mt-4 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase flex items-center justify-center">
+          <Link
+            href="/"
+            className="w-[60vw] h-[40px] mt-4 cursor-pointer text-white rounded-lg bg-[#004A8D] shadow-md text-xs font-semibold uppercase flex items-center justify-center"
+          >
             <HiMiniArrowRightStartOnRectangle className="w-[35px]" size={18} />
             Sair
           </Link>
         }
+        saudacao={`Logado: ${usuarioNome || "..."}`}
       />
 
       <div className="w-full flex flex-col mt-2 space-y-6 px-1">
-        {showForm && (
-          <ProjectForm onProjectAdded={() => window.location.reload()} />
-        )}
+        {showForm && <ProjectForm onProjectAdded={() => window.location.reload()} />}
 
         <div className="w-full flex justify-between space-x-8">
           <div className="w-full p-2">
@@ -201,8 +183,6 @@ export default function SupervisorPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-
-              {/* NOTE: opções com inicial maiúscula para combinar com o banco */}
               <select
                 className="w-[300px] h-[35px] border-2 border-[#004A8D] text-black dark:text-white dark:bg-gray-900 px-2 py-1 rounded"
                 value={statusFilter}
@@ -221,7 +201,6 @@ export default function SupervisorPage() {
           </div>
         </div>
 
-        {/* CARDS */}
         <div className="w-full flex flex-wrap gap-6 justify-center mt-6">
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project) => (
@@ -233,14 +212,13 @@ export default function SupervisorPage() {
               />
             ))
           ) : (
-            <p className="text-gray-600 dark:text-gray-300">Nenhum projeto encontrado.</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              Nenhum projeto encontrado.
+            </p>
           )}
         </div>
-
-        {/* removi o "Ações do Supervisor" (feedback global) porque agora o feedback é dado por projeto dentro do modal */}
       </div>
 
-      {/* Novo modal externo (coloque ProjectModal.jsx em _components) */}
       {selectedProject && (
         <ProjectModal
           project={selectedProject}
@@ -250,4 +228,3 @@ export default function SupervisorPage() {
     </div>
   );
 }
-
