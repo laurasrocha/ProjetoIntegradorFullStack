@@ -1,7 +1,11 @@
 import "./globals.css";
 import { ToastProvider } from "./_components/ToastProvider";
 import { cookies } from "next/headers";
-import { Poppins, Merriweather, Roboto, Roboto_Condensed  } from "next/font/google";
+import { Poppins, Merriweather, Roboto, Roboto_Condensed } from "next/font/google";
+
+export const metadata = {
+  title: "Gestão de Projetos",
+};
 
 //usando fontes do next/font/google
 //estão sendo chamadas no @theme:inline do global.css
